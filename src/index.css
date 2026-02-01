@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .btn-primary {
+    @apply bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300;
+  }
+  
+  .section-title {
+    @apply text-3xl font-bold text-center mb-8 text-pink-800;
+  }
+}
+.judul {
+  @apply sm:text-lg text-sm text-center text-[#AD9052] mb-2 font-dmsans uppercase tracking-[8px];
+}
+
+.subjudul {
+  @apply sm:text-5xl text-3xl font-light text-center text-[black] mb-2 font-cormorant;
+}
+
+.subjudul2 {
+  @apply sm:text-5xl text-3xl text-center font-semibold italic text-[black] mb-4 font-cormorant ;
+}
+
+body {
+  @apply font-chenla;
+}
+
+html {
+  scroll-behavior: smooth;
+}
