@@ -1,4 +1,5 @@
 import { Instagram, Facebook, MessageCircle } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const quickLinks = [
   { name: "Beranda", href: "#beranda" },
@@ -18,7 +19,7 @@ const services = [
   "Lash & Brow",
 ];
 
-export default function Footer() {
+const Footer = () => {
   return (
     <footer className="bg-[#332407]  text-white">
       <div className="container mx-auto px-6 py-16">
@@ -29,36 +30,36 @@ export default function Footer() {
               <span className="">Nay Beauty</span>
             </h2>
 
-            <p className="text-sm leading-relaxed mb-6 font-body">
+            <p className="text-sm leading-relaxed mb-6">
               Nikmati pengalaman perawatan kecantikan premium dengan layanan
               personal dan berkualitas. Transformasi diri Anda dimulai di
               NayBeauty
             </p>
 
             <div className="flex items-center gap-3">
-              <a
-                href="#"
+              <Link
+                to={"#"}
                 aria-label="Instagram"
-                className="w-10 h-10 flex items-center justify-center border border-primary-foreground/30 hover:bg-primary-foreground hover:text-foreground transition-colors"
+                className="w-10 h-10 flex items-center justify-center border transition-colors"
               >
                 <Instagram size={18} />
-              </a>
+              </Link>
 
-              <a
-                href="#"
+              <Link
+                to={"#"}
                 aria-label="Facebook"
-                className="w-10 h-10 flex items-center justify-center border border-primary-foreground/30 hover:bg-primary-foreground hover:text-foreground transition-colors"
+                className="w-10 h-10 flex items-center justify-center border transition-colors"
               >
                 <Facebook size={18} />
-              </a>
+              </Link>
 
-              <a
-                href="#"
+              <Link
+                to={"#"}
                 aria-label="WhatsApp"
-                className="w-10 h-10 flex items-center justify-center border border-primary-foreground/30 hover:bg-primary-foreground hover:text-foreground transition-colors"
+                className="w-10 h-10 flex items-center justify-center border transition-colors"
               >
                 <MessageCircle size={18} />
-              </a>
+              </Link>
             </div>
           </div>
 
@@ -70,12 +71,12 @@ export default function Footer() {
             <ul className="space-y-3">
               {quickLinks.map((link) => (
                 <li key={link.name}>
-                  <a
+                  <Link
                     href={link.href}
-                    className="text-sm hover: transition-colors font-body"
+                    className="text-sm transition-colors"
                   >
                     {link.name}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -87,7 +88,7 @@ export default function Footer() {
             <ul className="space-y-3">
               {services.map((service) => (
                 <li key={service}>
-                  <span className="text-sm font-body">
+                  <span className="text-sm">
                     {service}
                   </span>
                 </li>
@@ -98,7 +99,7 @@ export default function Footer() {
           {/* Contact */}
           <div>
             <h3 className="text-sm tracking-widest uppercase mb-6 font-chenla">Kontak</h3>
-            <ul className="space-y-3 text-sm font-body">
+            <ul className="space-y-3 text-sm">
               <li>Jl. Purwodadi - Bagelen, Dusun II, Purwodadi, Kec. Purwodadi, Kabupaten Purworejo</li>
               <li>Jawa Tengah, 54173</li>
               <li>081234567890</li>
@@ -112,23 +113,23 @@ export default function Footer() {
       <div className="border-t border-gray-500">
         <div className="container mx-auto px-6 py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="/50 text-sm font-body">
+            <p className="text-sm">
               © 2024 Nay Beauty Salon. All rights reserved.
             </p>
 
             <div className="flex items-center gap-6">
-              <a
-                href="#"
-                className="/50 text-sm hover: transition-colors font-body"
+              <Link
+                to={"#"}
+                className="text-sm transition-colors"
               >
                 Privacy Policy
-              </a>
-              <a
-                href="#"
-                className="/50 text-sm hover: transition-colors font-body"
+              </Link>
+              <Link
+                to={"#"}
+                className="text-sm transition-colors"
               >
                 Terms of Service
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -136,3 +137,6 @@ export default function Footer() {
     </footer>
   );
 }
+
+
+export default Footer;

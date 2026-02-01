@@ -1,4 +1,3 @@
-import ContactForm from "../components/ContactForm";
 import { HiOutlineLocationMarker } from "react-icons/hi";
 import { BsTelephone } from "react-icons/bs";
 const Contact = () => {

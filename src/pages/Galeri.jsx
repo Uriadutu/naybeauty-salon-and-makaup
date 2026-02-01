@@ -1,5 +1,3 @@
-import { PiFlowerLotus } from "react-icons/pi";
-import { IoIosArrowRoundForward } from "react-icons/io";
 const Galeri = () => {
   return (
     <section id="galeri">

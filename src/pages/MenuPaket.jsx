@@ -1,5 +1,4 @@
-import { PiFlowerLotus } from "react-icons/pi";
-import { IoIosArrowRoundForward, IoMdCheckmark } from "react-icons/io";
+import { IoMdCheckmark } from "react-icons/io";
 const MenuPaket = () => {
   return (
     <section id="menu-paket">
