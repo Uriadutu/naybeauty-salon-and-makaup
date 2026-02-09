@@ -1,4 +1,5 @@
-import { Instagram, Facebook, MessageCircle } from "lucide-react";
+import { Instagram} from "lucide-react";
+import { BsTiktok, BsWhatsapp } from "react-icons/bs";
 import { Link } from "react-router-dom";
 
 const quickLinks = [
@@ -38,7 +39,7 @@ const Footer = () => {
 
             <div className="flex items-center gap-3">
               <Link
-                to={"#"}
+                to={"https://www.instagram.com/naybeautymakeup_/"}
                 aria-label="Instagram"
                 className="w-10 h-10 flex items-center justify-center border transition-colors"
               >
@@ -47,10 +48,10 @@ const Footer = () => {
 
               <Link
                 to={"#"}
-                aria-label="Facebook"
+                aria-label="Tiktok"
                 className="w-10 h-10 flex items-center justify-center border transition-colors"
               >
-                <Facebook size={18} />
+                <BsTiktok size={18} />
               </Link>
 
               <Link
@@ -58,7 +59,7 @@ const Footer = () => {
                 aria-label="WhatsApp"
                 className="w-10 h-10 flex items-center justify-center border transition-colors"
               >
-                <MessageCircle size={18} />
+                <BsWhatsapp size={18} />
               </Link>
             </div>
           </div>

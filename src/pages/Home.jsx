@@ -1,9 +1,18 @@
-import { Link } from "react-router-dom";
 import { IoIosArrowForward } from "react-icons/io";
 import bg from "../img/bg.jpeg";
 import naylogo from "../img/logo.png";
 
 const Home = () => {
+  const scrollToSection = (id) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  };
+
   return (
     <section id="home">
       <div className="bg-black">
@@ -36,18 +45,21 @@ const Home = () => {
             </p>
 
             <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
-              <button className="py-3 px-4 bg-white text-black text-lg hover:bg-gray-100 w-full md:w-auto">
+              <button
+                className="py-3 px-4 bg-white text-black text-lg hover:bg-gray-100 w-full md:w-auto"
+                onClick={() => scrollToSection("contact")}
+              >
                 <div className="flex items-center gap-2 justify-center">
                   Reservasi Sekarang <IoIosArrowForward />
                 </div>
               </button>
 
-              <Link
-                to="/contact"
+              <button
+              onClick={()=> scrollToSection("services")}
                 className="border-2 border-white hover:bg-white/20 duration-300 py-3 px-4 text-white text-lg w-full md:w-auto text-center"
               >
                 Lihat Layanan
-              </Link>
+              </button>
             </div>
           </div>
         </section>

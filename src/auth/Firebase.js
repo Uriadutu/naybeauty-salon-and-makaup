@@ -1,21 +1,21 @@
-// import { initializeApp } from "firebase/app";
-// import { getAuth } from "firebase/auth";
-// import { getFirestore } from "firebase/firestore";
-// import { getStorage } from "firebase/storage";
-// // Firebase config (gantilah dengan konfigurasi proyek Firebase Anda)
-// const firebaseConfig = {
-//   apiKey: "AIzaSyBf_jSW_Xeht5WSmCHzWmJrKdkH1cJcHrs",
-//   authDomain: "seren-app-51e96.firebaseapp.com",
-//   projectId: "seren-app-51e96",
-//   storageBucket: "seren-app-51e96.firebasestorage.app",
-//   messagingSenderId: "522436870841",
-//   appId: "1:522436870841:web:d1ebf6e997fe5a3d545168",
-//   measurementId: "G-YLLSLBKJ81"
-// };
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
+// Firebase config (gantilah dengan konfigurasi proyek Firebase Anda)
+const firebaseConfig = {
+  apiKey: "AIzaSyC61zPpzCNREL_ZI4Pw6TO3x9MKgJtUTbw",
+  authDomain: "naybeautysalon-d61ea.firebaseapp.com",
+  projectId: "naybeautysalon-d61ea",
+  storageBucket: "naybeautysalon-d61ea.firebasestorage.app",
+  messagingSenderId: "994962508559",
+  appId: "1:994962508559:web:f3f2221bd1335b0cb04c7a",
+  measurementId: "G-MLMCC6YSBR",
+};
 
-// const app = initializeApp(firebaseConfig);
-// const auth = getAuth(app);
-// export const db = getFirestore(app);
-// const storage = getStorage(app);
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+export const db = getFirestore(app);
+const storage = getStorage(app);
 
-// export { auth, storage };
+export { auth, storage };
