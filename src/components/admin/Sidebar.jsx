@@ -6,6 +6,8 @@ import {
   FiImage,
   FiLogOut,
 } from "react-icons/fi";
+import { PiFlowerLotus } from "react-icons/pi";
+import { useNavigate } from "react-router-dom";
 
 const Sidebar = ({ isOpen, setIsOpen }) => {
   return (
@@ -19,55 +21,62 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       />
 
       <aside
-        className={`fixed md:static top-0 left-0 z-40 h-full w-64 bg-[#FFF9EB] shadow-lg transform transition-transform duration-300
-        ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}
+        className={`fixed top-0 left-0 z-40 w-64 bg-[#332407] shadow-lg
+  transform transition-transform duration-300 h-full
+  ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 h-16 border-b">
-          <h1 className="font-bold text-lg text-gray-900">
-            Nay<span className="text-gray-500">Admin</span>
-          </h1>
-          <button
-            className="md:hidden"
-            onClick={() => setIsOpen(false)}
-          >
-            ✕
-          </button>
+        <div className="flex flex-col h-full justify-between">
+          <div className="flex items-center justify-between px-6 h-[75px] border-b border-[#413826]">
+            <div className="flex items-center gap-3">
+              <h1 className="bg-[#CB9B00] p-1 text-[#332407] rounded">
+                <PiFlowerLotus size={23} />
+              </h1>
+              <h1 className="font-bold  text-lg text-white font-crimson">NayBeauty</h1>
+            </div>
+            <button className="md:hidden" onClick={() => setIsOpen(false)}>
+              ✕
+            </button>
+          </div>
+
+          {/* Menu */}
+          <div className="flex items-start h-full w-full">
+            <nav className="p-4 space-y-2 w-full ">
+              <MenuItem icon={<FiHome />} label="Dashboard" to="/dashboard" />
+              <MenuItem icon={<FiGrid />} label="Layanan" to="/layanan" />
+              <MenuItem icon={<FiList />} label="Menu" to="/menu" />
+              <MenuItem icon={<FiBox />} label="Paket" to="/paket" />
+              <MenuItem icon={<FiImage />} label="Galeri" to="/galeri" />
+
+              {/* <hr className="my-4" /> */}
+            </nav>
+          </div>
+          <div className="w-full border-t border-[#413826] px-4 py-5">
+            <MenuItem icon={<FiLogOut />} label="Logout" danger />
+          </div>
         </div>
-
-        {/* Menu */}
-        <nav className="p-4 space-y-2">
-          <MenuItem icon={<FiHome />} label="Dashboard" />
-          <MenuItem icon={<FiGrid />} label="Layanan" />
-          <MenuItem icon={<FiList />} label="Menu" />
-          <MenuItem icon={<FiBox />} label="Paket" />
-          <MenuItem icon={<FiImage />} label="Galeri" />
-
-          <hr className="my-4" />
-
-          <MenuItem
-            icon={<FiLogOut />}
-            label="Logout"
-            danger
-          />
-        </nav>
       </aside>
     </>
   );
 };
 
-const MenuItem = ({ icon, label, danger }) => (
-  <button
-    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition
+const MenuItem = ({ icon, label, danger, to }) => {
+  const navigate = useNavigate();
+
+  return (
+    <button
+      onClick={() => navigate(to)}
+      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition font-cormorant
       ${
         danger
-          ? "text-red-600 hover:bg-red-100"
-          : "text-gray-700 hover:bg-[#FFE8DA]"
+          ? "text-gray-700 hover:bg-[#413826]"
+          : "text-gray-700 hover:bg-[#413826]"
       }`}
-  >
-    <span className="text-xl">{icon}</span>
-    <span className="font-medium">{label}</span>
-  </button>
-);
+    >
+      <span className="text-xl text-[#CB9B00]">{icon}</span>
+      <span className="font-medium text-white">{label}</span>
+    </button>
+  );
+};
 
 export default Sidebar;

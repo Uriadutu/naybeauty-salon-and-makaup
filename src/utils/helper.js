@@ -14,3 +14,26 @@ export function parseAndFormatDateString(dateString) {
       .join(" ");
   }
   
+
+export const truncateChars = (text, limit) => {
+    if (!text) return "";
+
+    if (text.length <= limit) return text;
+
+    return text.slice(0, limit) + "...";
+  };
+
+export const formatRupiah = (number) => {
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+    }).format(number);
+  };
+
+export const joinWithDan = (arr) => {
+  if (!arr || arr.length === 0) return "";
+  if (arr.length === 1) return arr[0];
+  if (arr.length === 2) return `${arr[0]}, dan ${arr[1]}`;
+
+  return `${arr.slice(0, -1).join(", ")}, dan ${arr[arr.length - 1]}`;
+};

@@ -30,8 +30,8 @@ const Header = () => {
   const menus = [
     ["Beranda", "home"],
     ["Tentang Kami", "about"],
-    ["Layanan", "services"],
-    ["Menu/Paket", "menu-paket"],
+    ["Layanan & Menu", "services"],
+    ["Paket", "menu-paket"],
     ["Galeri", "galeri"],
     ["Kontak", "contact"],
   ];

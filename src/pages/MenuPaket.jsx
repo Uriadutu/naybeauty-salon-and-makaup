@@ -4,12 +4,12 @@ const MenuPaket = () => {
     <section id="menu-paket">
       <div className="py-16 px-4 sm:px-8 bg-[#FFF9EB] sm:h-[100vh]">
         <div className="">
-          <h1 className="judul">Menu Dan Paket</h1>
+          <h1 className="judul">Paket</h1>
           <h1 className="subjudul">Pilih Paket</h1>
           <h1 className="subjudul2">Sesuai Kebutuhan</h1>
-          <h1 className="text-center text-black mt-5">
-            Kami menyediakan berbagai layanan kecantikan lengkap untuk memenuhi
-            kebutuhan Anda.
+          <h1 className="sub-deskripsi">
+            Nikmati berbagai paket perawatan eksklusif dengan kombinasi layanan
+            terbaik untuk hasil maksimal.
           </h1>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 justify-center items-center mt-10">
             <div className="bg-white p-8 pb-1 border border-gray-300 hover:shadow-lg duration-500 h-[26rem]">

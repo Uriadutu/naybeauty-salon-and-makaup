@@ -10,7 +10,7 @@ const Contact = () => {
           <h1 className="judul">Kontak</h1>
           <h1 className="subjudul">Hubungi Kami</h1>
           <h1 className="subjudul2">Disini</h1>
-          <h1 className="text-center text-black">
+          <h1 className="sub-deskripsi">
             Siap untuk memulai perjalanan kecantikan Anda? Hubungi kami untuk
             reservasi atau pertanyaan lebih lanjut.
           </h1>

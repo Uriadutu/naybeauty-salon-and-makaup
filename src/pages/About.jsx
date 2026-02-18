@@ -12,7 +12,18 @@ const certificates = [...images, ...images];
 
 const About = () => {
   const scrollRef = useRef(null);
-  const [previewImg, setPreviewImg] = useState(null);
+  const [previewIndex, setPreviewIndex] = useState(null);
+  const totalImages = images.length;
+
+  const handleNext = (e) => {
+    e.stopPropagation();
+    setPreviewIndex((prev) => (prev + 1) % totalImages);
+  };
+
+  const handlePrev = (e) => {
+    e.stopPropagation();
+    setPreviewIndex((prev) => (prev === 0 ? totalImages - 1 : prev - 1));
+  };
 
   useEffect(() => {
     const container = scrollRef.current;
@@ -115,20 +126,35 @@ const About = () => {
                   src={img}
                   alt={`Sertifikat ${index + 1}`}
                   className="w-full h-40 sm:h-48 object-cover rounded-sm cursor-pointer"
-                  onClick={() => setPreviewImg(img)}
+                  // onClick={() => setPreviewImg(img)}
+                  onClick={() => setPreviewIndex(index)}
                 />
               </div>
             ))}
           </div>
         </div>
       </div>
-      {previewImg && (
+      {previewIndex !== null && (
         <div
           className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center px-4"
-          onClick={() => setPreviewImg(null)}
+          onClick={() => setPreviewIndex(null)}
         >
+          {/* PREV */}
+          <button
+            onClick={handlePrev}
+            className="
+        absolute left-4 sm:left-8
+        text-white text-4xl
+        hover:scale-110 transition
+        select-none
+      "
+          >
+            ‹
+          </button>
+
+          {/* IMAGE */}
           <img
-            src={previewImg}
+            src={images[previewIndex]}
             alt="Preview Sertifikat"
             className="
         max-w-full max-h-[90vh]
@@ -136,6 +162,19 @@ const About = () => {
         animate-fadeIn
       "
           />
+
+          {/* NEXT */}
+          <button
+            onClick={handleNext}
+            className="
+        absolute right-4 sm:right-8
+        text-white text-4xl
+        hover:scale-110 transition
+        select-none
+      "
+          >
+            ›
+          </button>
         </div>
       )}
     </section>

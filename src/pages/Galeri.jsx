@@ -41,7 +41,7 @@ const Galeri = () => {
           <h1 className="judul">Galeri</h1>
           <h1 className="subjudul">Hasil Karya</h1>
           <h1 className="subjudul2">Salon Kami</h1>
-          <p className="text-black/70 max-w-2xl mx-auto mt-4">
+          <p className="sub-deskripsi">
             Lihatlah transformasi menakjubkan yang telah diciptakan untuk
             klien-klien kami.
           </p>

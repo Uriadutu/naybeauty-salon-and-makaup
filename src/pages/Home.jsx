@@ -49,14 +49,14 @@ const Home = () => {
                 className="py-3 px-4 bg-white text-black text-lg hover:bg-gray-100 w-full md:w-auto"
                 onClick={() => scrollToSection("contact")}
               >
-                <div className="flex items-center gap-2 justify-center">
+                <div className="flex items-center gap-2 justify-center font-dmsans uppercase text-sm">
                   Reservasi Sekarang <IoIosArrowForward />
                 </div>
               </button>
 
               <button
               onClick={()=> scrollToSection("services")}
-                className="border-2 border-white hover:bg-white/20 duration-300 py-3 px-4 text-white text-lg w-full md:w-auto text-center"
+                className="border-2 border-white font-semibold text-sm hover:bg-white/20 duration-300 py-3 px-4 text-white w-full md:w-auto text-center"
               >
                 Lihat Layanan
               </button>

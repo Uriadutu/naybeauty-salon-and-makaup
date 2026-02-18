@@ -2,15 +2,15 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
-// Firebase config (gantilah dengan konfigurasi proyek Firebase Anda)
+
 const firebaseConfig = {
-  apiKey: "AIzaSyC61zPpzCNREL_ZI4Pw6TO3x9MKgJtUTbw",
-  authDomain: "naybeautysalon-d61ea.firebaseapp.com",
-  projectId: "naybeautysalon-d61ea",
-  storageBucket: "naybeautysalon-d61ea.firebasestorage.app",
-  messagingSenderId: "994962508559",
-  appId: "1:994962508559:web:f3f2221bd1335b0cb04c7a",
-  measurementId: "G-MLMCC6YSBR",
+  apiKey: "AIzaSyAv2z60YzF9Epxd7kpo5TGzShjvQi2XgyU",
+  authDomain: "neybeauty-f1f24.firebaseapp.com",
+  projectId: "neybeauty-f1f24",
+  storageBucket: "neybeauty-f1f24.firebasestorage.app",
+  messagingSenderId: "74850089867",
+  appId: "1:74850089867:web:af81defcf9cd923c15cd8e",
+  measurementId: "G-CNVPMHY7VX"
 };
 
 const app = initializeApp(firebaseConfig);

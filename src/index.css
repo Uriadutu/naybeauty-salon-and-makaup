@@ -11,16 +11,29 @@
     @apply text-3xl font-bold text-center mb-8 text-pink-800;
   }
 }
+
 .judul {
   @apply sm:text-lg text-sm text-center text-[#AD9052] mb-2 font-dmsans uppercase tracking-[8px];
+}
+
+.sub-deskripsi {
+  @apply font-crimson text-center text-black/70 max-w-2xl mx-auto text-lg
+}
+
+.judul-admin {
+ @apply text-2xl sm:text-4xl font-medium font-crimson
 }
 
 .subjudul {
   @apply sm:text-5xl text-3xl font-light text-center text-[black] mb-2 font-cormorant;
 }
 
+.subjudul-admin {
+  @apply sm:text-xl text-lg font-crimson font-light
+}
+
 .subjudul2 {
-  @apply sm:text-5xl text-3xl text-center font-semibold italic text-[black] mb-4 font-cormorant ;
+  @apply sm:text-5xl text-3xl text-center font-semibold italic text-[black] font-cormorant ;
 }
 
 body {
