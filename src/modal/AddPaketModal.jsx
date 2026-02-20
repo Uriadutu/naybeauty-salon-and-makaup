@@ -1,296 +1,278 @@
-import React, { useState, useMemo } from "react";
-import { X, ChevronDown } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { collection, getDocs, addDoc, updateDoc, doc } from "firebase/firestore";
+import { db } from "../auth/Firebase";
+import { motion } from "framer-motion";
+import { ChevronDown } from "lucide-react";
 
-// mock menu items per service
-const getMenuItemsForService = (serviceName) => {
-  const menuByService = {
-    "Hair Styling": ["Basic Cut", "Blow Dry", "Styling", "Deep Conditioning"],
-    "Hair Coloring": ["Full Color", "Highlights", "Root Touch-up", "Color Treatment"],
-    "Facial Treatment": ["Cleansing", "Exfoliation", "Extraction", "Hydration Mask"],
-    Manicure: ["Base Coat", "Polish", "Top Coat", "Nail Art"],
-    Pedicure: ["Soak", "Scrub", "Polish", "Massage"],
-    Massage: ["Swedish Massage", "Deep Tissue", "Aromatherapy", "Hot Stone"],
-  };
-
-  return menuByService[serviceName] || [];
-};
-
-const AddPaketModal = ({
-  isOpen,
-  onClose,
-  onSave,
-  services,
-  editingPackage,
-}) => {
-  const [packageName, setPackageName] = useState(editingPackage?.name || "");
-  const [packageDesc, setPackageDesc] = useState(editingPackage?.description || "");
-  const [selectedServices, setSelectedServices] = useState(
-    editingPackage?.services || []
-  );
-  const [customPrice, setCustomPrice] = useState(
-    editingPackage?.finalPrice?.toString() || ""
-  );
+const AddPaketModal = ({ isOpen, onClose, editingPackage, onSave, namaTombol }) => {
+  const [layananList, setLayananList] = useState([]);
+  const [menuMap, setMenuMap] = useState({});
   const [expandedService, setExpandedService] = useState(null);
 
-  const basePrice = useMemo(() => {
-    return selectedServices.reduce((total, ps) => {
-      const service = services.find((s) => s.id === ps.serviceId);
-      return total + (service ? parseInt(service.price) : 0);
-    }, 0);
-  }, [selectedServices, services]);
+  const [form, setForm] = useState({
+    name: "",
+    description: "",
+    services: [],
+    customPrice: "",
+  });
 
-  const handleServiceToggle = (serviceId) => {
-    const exists = selectedServices.find((s) => s.serviceId === serviceId);
+  /* ================= FETCH DATA ================= */
+  useEffect(() => {
+    const fetchData = async () => {
+      const layananSnap = await getDocs(collection(db, "layanan"));
+      const layananData = layananSnap.docs.map((d) => ({
+        id: d.id,
+        ...d.data(),
+      }));
 
-    if (exists) {
-      setSelectedServices(
-        selectedServices.filter((s) => s.serviceId !== serviceId)
-      );
-    } else {
-      const service = services.find((s) => s.id === serviceId);
-      if (service) {
-        setSelectedServices([
-          ...selectedServices,
-          {
-            serviceId,
-            serviceName: service.name,
-            selectedMenuItems: [],
-          },
-        ]);
-      }
-    }
-  };
+      const menuSnap = await getDocs(collection(db, "menu_layanan"));
+      const map = {};
 
-  const handleMenuToggle = (serviceId, menuItem) => {
-    setSelectedServices(
-      selectedServices.map((ps) => {
-        if (ps.serviceId === serviceId) {
-          const isSelected = ps.selectedMenuItems.includes(menuItem);
-          return {
-            ...ps,
-            selectedMenuItems: isSelected
-              ? ps.selectedMenuItems.filter((m) => m !== menuItem)
-              : [...ps.selectedMenuItems, menuItem],
-          };
-        }
-        return ps;
-      })
-    );
-  };
+      menuSnap.forEach((d) => {
+        const m = d.data();
+        if (!map[m.id_layanan]) map[m.id_layanan] = [];
+        map[m.id_layanan].push({
+          id: d.id,
+          nama: m.nama_menu,
+          harga: Number(m.harga_menu),
+        });
+      });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    if (!packageName.trim() || selectedServices.length === 0) {
-      alert("Mohon isi semua field dan pilih minimal 1 layanan");
-      return;
-    }
-
-    const finalPrice = customPrice ? parseInt(customPrice) : basePrice;
-
-    const newPackage = {
-      id: editingPackage?.id || Date.now().toString(),
-      name: packageName,
-      description: packageDesc,
-      basePrice,
-      finalPrice,
-      duration: selectedServices.reduce((total, ps) => {
-        const service = services.find((s) => s.id === ps.serviceId);
-        return total + (service ? parseInt(service.duration) : 0);
-      }, 0),
-      services: selectedServices,
-      createdAt: editingPackage?.createdAt || new Date().toISOString(),
+      setLayananList(layananData);
+      setMenuMap(map);
     };
 
-    onSave(newPackage);
-    resetForm();
-    onClose();
+    fetchData();
+  }, []);
+
+  /* ================= EDIT MODE ================= */
+  useEffect(() => {
+    if (editingPackage) {
+      setForm({
+        ...editingPackage,
+        customPrice: editingPackage.finalPrice?.toString() || "",
+      });
+    }
+  }, [editingPackage]);
+
+  /* ================= SERVICE TOGGLE ================= */
+  const handleServiceToggle = (id) => {
+    const exists = form.services.find((s) => s.id_layanan === id);
+
+    setForm((prev) => ({
+      ...prev,
+      services: exists
+        ? prev.services.filter((s) => s.id_layanan !== id)
+        : [...prev.services, { id_layanan: id, selectedMenuItems: [] }],
+    }));
   };
 
-  const resetForm = () => {
-    setPackageName("");
-    setPackageDesc("");
-    setSelectedServices([]);
-    setCustomPrice("");
-    setExpandedService(null);
+  /* ================= MENU TOGGLE ================= */
+  const handleMenuToggle = (serviceId, menuId) => {
+    setForm((prev) => ({
+      ...prev,
+      services: prev.services.map((s) =>
+        s.id_layanan === serviceId
+          ? {
+              ...s,
+              selectedMenuItems: s.selectedMenuItems.includes(menuId)
+                ? s.selectedMenuItems.filter((id) => id !== menuId)
+                : [...s.selectedMenuItems, menuId],
+            }
+          : s
+      ),
+    }));
+  };
+
+  /* ================= HITUNG HARGA ================= */
+  const calculateBase = () => {
+    let harga = 0;
+
+    form.services.forEach((s) => {
+      s.selectedMenuItems.forEach((id) => {
+        const menu = menuMap[s.id_layanan]?.find((m) => m.id === id);
+        if (menu) {
+          harga += menu.harga;
+        }
+      });
+    });
+
+    return { harga };
+  };
+
+  const { harga: basePrice } = calculateBase();
+  const finalPrice = form.customPrice
+    ? Number(form.customPrice)
+    : basePrice;
+
+  /* ================= SAVE ================= */
+  const handleSubmit = async () => {
+    if (!form.name) return alert("Nama paket wajib diisi");
+    if (form.services.length === 0)
+      return alert("Pilih minimal satu layanan");
+
+    const payload = {
+      name: form.name,
+      description: form.description,
+      services: form.services,
+      basePrice,
+      finalPrice,
+      createdAt: new Date().toISOString(),
+      isLaris : false
+    };
+
+    if (editingPackage) {
+      await updateDoc(doc(db, "paket", editingPackage.id), payload);
+    } else {
+      await addDoc(collection(db, "paket"), payload);
+    }
+
+    onSave && onSave(payload);
+    onClose();
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-xl">
-        {/* HEADER */}
-        <div className="sticky top-0 bg-white border-b p-6 flex items-center justify-between">
-          <h2 className="text-2xl font-semibold">
-            {editingPackage ? "Edit Paket" : "Tambah Paket Baru"}
-          </h2>
-          <button
-            onClick={() => {
-              resetForm();
-              onClose();
-            }}
-            className="p-1 hover:bg-gray-100 rounded"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
+    <div className="fixed inset-0 px-4 bg-black/40 flex items-center justify-center z-50">
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-white w-[600px] max-h-[90vh] overflow-y-auto rounded-xl p-6"
+      >
+        <h2 className="text-xl font-semibold mb-4">
+          {editingPackage ? "Edit Paket" : "Tambah Paket"}
+        </h2>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          {/* NAMA & DESKRIPSI */}
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                Nama Paket
-              </label>
-              <input
-                value={packageName}
-                onChange={(e) => setPackageName(e.target.value)}
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-amber-600"
-              />
-            </div>
+        {/* NAMA */}
+        <input
+          className="w-full border rounded p-2 mb-3"
+          placeholder="Nama Paket"
+          value={form.name}
+          onChange={(e) => setForm({ ...form, name: e.target.value })}
+        />
 
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                Deskripsi Paket
-              </label>
-              <textarea
-                rows={3}
-                value={packageDesc}
-                onChange={(e) => setPackageDesc(e.target.value)}
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-amber-600"
-              />
-            </div>
-          </div>
+        {/* DESKRIPSI */}
+        <textarea
+          className="w-full border rounded p-2 mb-4"
+          placeholder="Deskripsi Paket"
+          value={form.description}
+          onChange={(e) =>
+            setForm({ ...form, description: e.target.value })
+          }
+        />
 
-          {/* PILIH LAYANAN */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4">
-              Pilih Layanan & Menu
-            </h3>
+        {/* LAYANAN */}
+        <div className="space-y-3">
+          {layananList
+            .filter((l) => menuMap[l.id]?.length)
+            .map((service) => {
+              const selected = form.services.find(
+                (s) => s.id_layanan === service.id
+              );
 
-            <div className="space-y-3 max-h-96 overflow-y-auto border rounded-lg p-4">
-              {services.map((service) => {
-                const isSelected = selectedServices.some(
-                  (s) => s.serviceId === service.id
-                );
-                const packageService = selectedServices.find(
-                  (s) => s.serviceId === service.id
-                );
-                const menuItems = getMenuItemsForService(service.name);
-                const isExpanded = expandedService === service.id;
-
-                return (
-                  <div key={service.id}>
-                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                      <input
-                        type="checkbox"
-                        checked={isSelected}
-                        onChange={() => handleServiceToggle(service.id)}
-                      />
-
-                      <div className="flex-1">
-                        <div className="font-medium">{service.name}</div>
-                        <div className="text-xs text-gray-600">
-                          Rp{parseInt(service.price).toLocaleString("id-ID")} •{" "}
-                          {service.duration} menit
-                        </div>
-                      </div>
-
-                      {isSelected && menuItems.length > 0 && (
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setExpandedService(
-                              isExpanded ? null : service.id
-                            )
-                          }
-                        >
-                          <ChevronDown
-                            className={`w-4 h-4 transition-transform ${
-                              isExpanded ? "rotate-180" : ""
-                            }`}
-                          />
-                        </button>
-                      )}
+              return (
+                <div key={service.id}>
+                  <div
+                    onClick={() => handleServiceToggle(service.id)}
+                    className={`flex justify-between items-center p-3 rounded cursor-pointer
+                    ${
+                      selected
+                        ? "bg-amber-50 border border-amber-400"
+                        : "bg-gray-50"
+                    }`}
+                  >
+                    <div className="flex gap-2">
+                      <input type="checkbox" readOnly checked={!!selected} />
+                      {service.nama}
                     </div>
 
-                    {isSelected && isExpanded && (
-                      <div className="ml-6 mt-2 space-y-2 border-l-2 border-amber-200 pl-3">
-                        {menuItems.map((item) => (
-                          <label key={item} className="flex gap-2 text-sm">
-                            <input
-                              type="checkbox"
-                              checked={packageService?.selectedMenuItems.includes(
-                                item
-                              )}
-                              onChange={() =>
-                                handleMenuToggle(service.id, item)
-                              }
-                            />
-                            {item}
-                          </label>
-                        ))}
-                      </div>
+                    {selected && (
+                      <ChevronDown
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setExpandedService(
+                            expandedService === service.id
+                              ? null
+                              : service.id
+                          );
+                        }}
+                      />
                     )}
                   </div>
-                );
-              })}
-            </div>
+
+                  {selected && expandedService === service.id && (
+                    <div className="ml-6 mt-2 space-y-2 border-l-2 pl-3">
+                      {menuMap[service.id].map((m) => (
+                        <label
+                          key={m.id}
+                          className="flex justify-between text-sm"
+                        >
+                          <div className="flex gap-2">
+                            <input
+                              type="checkbox"
+                              checked={selected.selectedMenuItems.includes(
+                                m.id
+                              )}
+                              onChange={() =>
+                                handleMenuToggle(service.id, m.id)
+                              }
+                            />
+                            {m.nama}
+                          </div>
+                          <span>
+                            Rp{m.harga.toLocaleString("id-ID")}
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+        </div>
+
+        {/* HARGA */}
+        <div className="mt-6 space-y-2 border-t pt-4">
+          <div className="flex justify-between">
+            <span>Harga Dasar</span>
+            <span>Rp{basePrice.toLocaleString("id-ID")}</span>
           </div>
 
-          {/* HARGA */}
-          {selectedServices.length > 0 && (
-            <div className="bg-gray-50 p-4 rounded-lg space-y-3">
-              <div className="flex justify-between">
-                <span>Harga Dasar</span>
-                <span>Rp{basePrice.toLocaleString("id-ID")}</span>
-              </div>
+          <input
+            type="number"
+            placeholder="Harga Final (opsional)"
+            className="w-full border rounded p-2"
+            value={form.customPrice}
+            onChange={(e) =>
+              setForm({ ...form, customPrice: e.target.value })
+            }
+          />
 
-              <input
-                type="number"
-                placeholder="Harga Final (opsional)"
-                value={customPrice}
-                onChange={(e) => setCustomPrice(e.target.value)}
-                className="w-full px-4 py-2 border rounded-lg"
-              />
-
-              <div className="flex justify-between font-semibold">
-                <span>Total</span>
-                <span className="text-amber-600">
-                  Rp
-                  {(customPrice
-                    ? parseInt(customPrice)
-                    : basePrice
-                  ).toLocaleString("id-ID")}
-                </span>
-              </div>
-            </div>
-          )}
-
-          {/* ACTION */}
-          <div className="flex gap-3 pt-4 border-t">
-            <button
-              type="button"
-              onClick={() => {
-                resetForm();
-                onClose();
-              }}
-              className="flex-1 border rounded-lg py-2"
-            >
-              Batal
-            </button>
-
-            <button
-              type="submit"
-              disabled={selectedServices.length === 0}
-              className="flex-1 bg-amber-600 text-white rounded-lg py-2"
-            >
-              {editingPackage ? "Update Paket" : "Buat Paket"}
-            </button>
+          <div className="flex justify-between font-semibold">
+            <span>Harga Digunakan</span>
+            <span className="text-amber-600">
+              Rp{finalPrice.toLocaleString("id-ID")}
+            </span>
           </div>
-        </form>
-      </div>
+        </div>
+
+        {/* BUTTON */}
+        <div className="flex gap-3 mt-6">
+          <button
+            onClick={onClose}
+            className="flex-1 border rounded py-2"
+          >
+            Batal
+          </button>
+          <button
+            onClick={handleSubmit}
+            className="flex-1 bg-amber-600 text-white rounded py-2"
+          >
+            {namaTombol}
+          </button>
+        </div>
+      </motion.div>
     </div>
   );
 };

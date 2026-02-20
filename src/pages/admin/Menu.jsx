@@ -1,15 +1,9 @@
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Layout from "../../components/admin/Layout";
 import { RiMoreLine } from "react-icons/ri";
 import { AnimatePresence } from "framer-motion";
-import {
-  collection,
-  getDocs,
-  orderBy,
-  query,
-} from "firebase/firestore";
+import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import { db } from "../../auth/Firebase";
-import { truncateChars } from "../../utils/helper";
 import DetailLayananModal from "../../modal/DetailLayananModal";
 import { useNavigate } from "react-router-dom";
 
@@ -25,7 +19,6 @@ const Menu = () => {
     y: 0,
     id: null,
   });
-
 
   const navigate = useNavigate();
 
@@ -55,8 +48,8 @@ const Menu = () => {
   // 🔍 FILTER SEARCH
   const filteredData = layananData.filter(
     (item) =>
-      item.nama.toLowerCase().includes(search.toLowerCase()) ||
-      item.deskripsi.toLowerCase().includes(search.toLowerCase()),
+      item.nama?.toLowerCase().includes(search.toLowerCase()) ||
+      item.deskripsi?.toLowerCase().includes(search.toLowerCase()),
   );
 
   const handleDetail = (data) => {
@@ -76,14 +69,13 @@ const Menu = () => {
           />
         )}
       </AnimatePresence>
-      <div className="p-4 sm:p-6">
+      <div className="p-2 sm:p-6">
         {/* HEADER */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-            <div className="">
-
-          <h1 className="judul-admin">Manajemen Menu</h1>
-          <h1 className="subjudul-admin">Kelola Menu Pada Salon Anda</h1>
-            </div>
+          <div className="">
+            <h1 className="judul-admin">Manajemen Menu</h1>
+            <h1 className="subjudul-admin">Kelola Menu Pada Salon Anda</h1>
+          </div>
         </div>
 
         {/* SEARCH */}
@@ -100,15 +92,12 @@ const Menu = () => {
 
         {/* TABLE */}
         <div className="w-full bg-white max-w-full border rounded-md border-[#E8DFD7]  overflow-x-auto shadow-md">
-          <div className="sm:w-auto w-10">
+          <div className="">
             <table className="w-full border-collapse">
               <thead className="bg-[#F5F1ED]  ">
                 <tr>
                   <th className="px-7 py-3 text-left text-sm font-medium whitespace-nowrap">
                     Nama Layanan
-                  </th>
-                  <th className="px-7 py-3 text-left text-sm font-medium">
-                    Deskripsi
                   </th>
                   <th className="py-3 text-center text-sm font-medium w-0 p-0">
                     #
@@ -137,13 +126,14 @@ const Menu = () => {
                   </tr>
                 ) : (
                   filteredData.map((item, index) => (
-                    <tr key={item.id} className="border-t hover:bg-[#F5F1ED] duration-300">
+                    <tr
+                      key={item.id}
+                      className="border-t hover:bg-[#F5F1ED] duration-300"
+                    >
                       <td className="px-7 py-3 whitespace-nowrap">
                         {item.nama}
                       </td>
-                      <td className="px-7 py-3 whitespace-nowrap">
-                        {truncateChars(item.deskripsi, 20)}
-                      </td>
+
                       <td className="px-2 py-3 text-center">
                         <button
                           onClick={(e) => {
@@ -185,7 +175,11 @@ const Menu = () => {
             >
               <button
                 onClick={() =>
-                  navigate(`/menu/edit-menu/${dropdown.id}/${filteredData.find((item) => item.id === dropdown.id).nama}`)
+                  navigate(
+                    `/menu/edit-menu/${dropdown.id}/${encodeURIComponent(
+                      filteredData.find((item) => item.id === dropdown.id).nama,
+                    )}`,
+                  )
                 }
                 className="w-full text-left px-3 py-2  hover:bg-gray-100"
               >

@@ -13,7 +13,6 @@ import {
 } from "firebase/firestore";
 import { db } from "../../auth/Firebase";
 import EditLayananModal from "../../modal/EditLayananModal";
-import { truncateChars } from "../../utils/helper";
 import DetailLayananModal from "../../modal/DetailLayananModal";
 
 const Layanan = () => {
@@ -70,11 +69,10 @@ const Layanan = () => {
     fetchLayanan();
   }, []);
 
-  // 🔍 FILTER SEARCH
   const filteredData = layananData.filter(
     (item) =>
-      item.nama.toLowerCase().includes(search.toLowerCase()) ||
-      item.deskripsi.toLowerCase().includes(search.toLowerCase()),
+      item.nama?.toLowerCase().includes(search.toLowerCase()) ||
+      item.deskripsi?.toLowerCase().includes(search.toLowerCase()),
   );
 
   const handleDetail = (data) => {
@@ -115,7 +113,7 @@ const Layanan = () => {
         )}
       </AnimatePresence>
 
-      <div className="p-4 sm:p-6">
+      <div className="p-2 sm:p-6">
         {/* HEADER */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <div className="">
@@ -149,15 +147,12 @@ const Layanan = () => {
 
         {/* TABLE */}
         <div className="w-full bg-white max-w-full border rounded-md border-[#E8DFD7]  overflow-x-auto shadow-md">
-          <div className="sm:w-auto w-10">
+          <div className="">
             <table className="w-full border-collapse">
               <thead className="bg-[#F5F1ED]  ">
                 <tr>
                   <th className="px-7 py-3 text-left text-sm font-medium whitespace-nowrap">
                     Nama Layanan
-                  </th>
-                  <th className="px-7 py-3 text-left text-sm font-medium">
-                    Deskripsi
                   </th>
                   <th className="py-3 text-center text-sm font-medium w-0 p-0">
                     #
@@ -192,9 +187,6 @@ const Layanan = () => {
                     >
                       <td className="px-7 py-3 whitespace-nowrap">
                         {item.nama}
-                      </td>
-                      <td className="px-7 py-3 whitespace-nowrap">
-                        {truncateChars(item.deskripsi, 20)}
                       </td>
                       <td className="px-2 py-3 text-center">
                         <button

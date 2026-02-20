@@ -94,7 +94,7 @@ const AturMenu = () => {
         )}
       </AnimatePresence>
 
-      <div className="p-4 sm:p-6">
+      <div className="p-2 sm:p-6">
         {/* HEADER */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <div className="">
