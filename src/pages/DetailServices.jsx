@@ -64,7 +64,6 @@ const DetailServices = () => {
       <HeaderDetail />
       <section id="services">
         <div className="py-16 px-4 sm:px-8 bg-[#FFE8DA]">
-          <h1 className="subjudul"></h1>
           <div>
             {/* GRID */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 justify-center mt-10">

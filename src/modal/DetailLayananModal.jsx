@@ -1,6 +1,3 @@
-import React, { useState } from "react";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import { db } from "../auth/Firebase";
 import { motion } from "framer-motion";
 
 const DetailLayananModal = ({ isOpen, onClose, dataDetail }) => {
