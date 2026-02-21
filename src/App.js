@@ -8,9 +8,10 @@ import Dashboard from './pages/admin/Dashboard';
 import Layanan from './pages/admin/Layanan';
 import Menu from './pages/admin/Menu';
 import Paket from './pages/admin/Paket';
-import Galeri from './pages/admin/Galeri';
 import DetailServices from './pages/DetailServices';
 import AturMenu from './pages/admin/AturMenu';
+import AturGaleri from './pages/admin/AturGaleri';
+import Galeri from './pages/admin/Galeri';
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
             <Route path="/menu/edit-menu/:id/:nama" element={<AturMenu />} />
             <Route path="/paket" element={<Paket />} />
             <Route path="/galeri" element={<Galeri />} />
+            <Route path="/galeri/atur-galeri/:id/:judul" element={<AturGaleri />} />
           </Routes>
         </main>
       </div>

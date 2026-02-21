@@ -5,7 +5,6 @@ import { IoMdCheckmark } from "react-icons/io";
 
 const MenuPaket = () => {
   const [paketList, setPaketList] = useState([]);
-  const [menuMap, setMenuMap] = useState({});
   const [loading, setLoading] = useState(true);
   const [menuLayanan, setMenuLayanan] = useState([]);
 
@@ -36,7 +35,6 @@ const MenuPaket = () => {
         map[data.id_layanan].push(data.nama_menu);
       });
 
-      setMenuMap(map);
     });
 
     // 🔹 Ambil semua paket

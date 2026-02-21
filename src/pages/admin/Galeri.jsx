@@ -1,118 +1,204 @@
-import React, { useState } from 'react';
-import { db } from '../../auth/Firebase';
-import { collection, addDoc } from 'firebase/firestore';
-import { useNavigate } from 'react-router-dom';
-import Layout from '../../components/admin/Layout';
+import { useEffect, useState } from "react";
+import Layout from "../../components/admin/Layout";
+import { RiMoreLine } from "react-icons/ri";
+import { AnimatePresence } from "framer-motion";
+import { collection, getDocs, orderBy, query } from "firebase/firestore";
+import { db } from "../../auth/Firebase";
+import DetailLayananModal from "../../modal/DetailLayananModal";
+import { useNavigate } from "react-router-dom";
 
 const Galeri = () => {
-  const [judul, setJudul] = useState('');
-  const [deskripsi, setDeskripsi] = useState('');
-  const [stok, setStok] = useState('');
-  const [selectedFile, setSelectedFile] = useState(null); // file dipilih, belum diupload
-  const [loading, setLoading] = useState(false);
+  const [search, setSearch] = useState("");
+  const [layananData, setLayananData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [dataDetail, setDataDetail] = useState({});
+  const [openModalDetail, setOpenModalDetail] = useState(false);
+  const [dropdown, setDropdown] = useState({
+    open: false,
+    x: 0,
+    y: 0,
+    id: null,
+  });
+
   const navigate = useNavigate();
-  // Simpan file saat dipilih, belum upload
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    setSelectedFile(file);
-  };
 
-  // Upload ke Cloudinary dan kembalikan URL
-  const uploadToCloudinary = async (file) => {
-    const data = new FormData();
-    data.append("file", file);
-    data.append("upload_preset", "gambar"); // pastikan preset ini tersedia
-    data.append("cloud_name", "ds2woakhp");
-
-    const res = await fetch("https://api.cloudinary.com/v1_1/ds2woakhp/image/upload", {
-      method: "POST",
-      body: data,
-    });
-
-    const result = await res.json();
-    return result.secure_url;
-  };
-
-  // Simpan ke Firestore setelah upload ke Cloudinary
-  const handleSubmit = async () => {
-    if (!judul || !deskripsi || !stok || !selectedFile) {
-      alert("Semua data wajib diisi dan gambar harus dipilih.");
-      return;
-    }
-
-    const parsedStok = parseInt(stok);
-    if (isNaN(parsedStok)) {
-      alert("Stok harus berupa angka.");
-      return;
-    }
-
+  const fetchLayanan = async () => {
     setLoading(true);
-
     try {
-      const imageURL = await uploadToCloudinary(selectedFile);
+      const q = query(collection(db, "layanan"), orderBy("createdAt", "desc"));
+      const snapshot = await getDocs(q);
 
-      await addDoc(collection(db, "galeri"), {
-        judul,
-        deskripsi,
-        stok: parsedStok,
-        gambar: imageURL,
-        createdAt: new Date(),
-      });
+      const data = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
 
-      alert("Data berhasil disimpan ke Firebase!");
-      // Reset form
-      setJudul('');
-      setDeskripsi('');
-      setStok('');
-      setSelectedFile(null);
-      navigate('/');
+      setLayananData(data);
     } catch (error) {
-      console.error("Gagal menyimpan:", error.message);
-      alert("Terjadi kesalahan saat menyimpan data.");
+      console.error("Gagal fetch layanan:", error);
     } finally {
       setLoading(false);
     }
   };
 
+  useEffect(() => {
+    fetchLayanan();
+  }, []);
+
+  // 🔍 FILTER SEARCH
+  const filteredData = layananData.filter(
+    (item) =>
+      item.nama?.toLowerCase().includes(search.toLowerCase()) ||
+      item.deskripsi?.toLowerCase().includes(search.toLowerCase()),
+  );
+
+  const handleDetail = (data) => {
+    setDropdown({ open: false, x: 0, y: 0, id: null });
+    setDataDetail(data);
+    setOpenModalDetail(true);
+  };
+
   return (
     <Layout>
+      <AnimatePresence>
+        {openModalDetail && (
+          <DetailLayananModal
+            isOpen={openModalDetail}
+            onClose={() => setOpenModalDetail(false)}
+            dataDetail={dataDetail}
+          />
+        )}
+      </AnimatePresence>
+      <div className="p-2 sm:p-6">
+        {/* HEADER */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <div className="">
+            <h1 className="judul-admin">Manajemen Galeri</h1>
+            <h1 className="subjudul-admin">Kelola Galeri Pada Salon Anda</h1>
+          </div>
+        </div>
 
-    <div style={{ maxWidth: 500, margin: "auto", padding: 20 }}>
-      <h2>Form Upload Gambar ke Firebase</h2>
+        {/* SEARCH */}
+        <div className="mb-4">
+          <input
+            type="text"
+            placeholder="Cari layanan..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full sm:w-64 px-3 py-2 border border-[#E8DFD7] rounded-md
+            focus:outline-none focus:ring-2 focus:ring-[#E8DFD7]"
+          />
+        </div>
 
-      <input type="file" accept="image/*" onChange={handleFileChange} /><br /><br />
+        {/* TABLE */}
+        <div className="w-full bg-white max-w-full border rounded-md border-[#E8DFD7]  overflow-x-auto shadow-md">
+          <div className="">
+            <table className="w-full border-collapse">
+              <thead className="bg-[#F5F1ED]  ">
+                <tr>
+                  <th className="px-7 py-3 text-left text-sm font-medium whitespace-nowrap">
+                    Nama Layanan
+                  </th>
+                  <th className="py-3 text-center text-sm font-medium w-0 p-0">
+                    #
+                  </th>
+                </tr>
+              </thead>
 
-      {selectedFile && (
-        <p>File terpilih: <strong>{selectedFile.name}</strong></p>
-      )}
+              <tbody className="">
+                {loading ? (
+                  <tr>
+                    <td
+                      colSpan="4"
+                      className="px-7 py-6 text-center text-gray-500"
+                    >
+                      Memuat data...
+                    </td>
+                  </tr>
+                ) : filteredData.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan="4"
+                      className="px-7 py-6 text-center text-gray-500"
+                    >
+                      Data tidak ditemukan
+                    </td>
+                  </tr>
+                ) : (
+                  filteredData.map((item, index) => (
+                    <tr
+                      key={item.id}
+                      className="border-t hover:bg-[#F5F1ED] duration-300"
+                    >
+                      <td className="px-7 py-3 whitespace-nowrap">
+                        {item.nama}
+                      </td>
 
-      <input
-        type="text"
-        placeholder="Judul Gambar"
-        value={judul}
-        onChange={(e) => setJudul(e.target.value)}
-        style={{ width: "100%", padding: 8 }}
-      /><br /><br />
+                      <td className="px-2 py-3 text-center">
+                        <button
+                          onClick={(e) => {
+                            const rect =
+                              e.currentTarget.getBoundingClientRect();
+                            setDropdown({
+                              open: true,
+                              x: rect.right,
+                              y: rect.bottom,
+                              id: item.id,
+                            });
+                          }}
+                          className="text-xl px-2"
+                        >
+                          <RiMoreLine />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
 
-      <textarea
-        placeholder="Deskripsi"
-        value={deskripsi}
-        onChange={(e) => setDeskripsi(e.target.value)}
-        style={{ width: "100%", padding: 8 }}
-      /><br /><br />
-
-      <input
-        type="number"
-        placeholder="Stok"
-        value={stok}
-        onChange={(e) => setStok(e.target.value)}
-        style={{ width: "100%", padding: 8 }}
-      /><br /><br />
-
-      <button onClick={handleSubmit} style={{ padding: "10px 20px" }} disabled={loading}>
-        {loading ? "Menyimpan..." : "Simpan ke Firebase"}
-      </button>
-    </div>
+        {/* DROPDOWN */}
+        {dropdown.open && (
+          <div
+            className="fixed inset-0 z-40"
+            onClick={() => setDropdown({ open: false, x: 0, y: 0, id: null })}
+          >
+            <div
+              className="absolute bg-white border rounded-md shadow-lg w-28 z-50"
+              style={{
+                top: dropdown.y + 6,
+                left: dropdown.x - 110,
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                onClick={() =>
+                  navigate(
+                    `/galeri/atur-galeri/${dropdown.id}/${encodeURIComponent(
+                      filteredData.find((item) => item.id === dropdown.id).nama,
+                    )}`,
+                  )
+                }
+                className="w-full text-left px-3 py-2  hover:bg-gray-100"
+              >
+                Atur Galeri
+              </button>
+              <button
+                onClick={() =>
+                  handleDetail(
+                    filteredData.find((item) => item.id === dropdown.id),
+                  )
+                }
+                className="w-full text-left px-3 py-2  hover:bg-gray-100"
+              >
+                Detail
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
     </Layout>
   );
 };

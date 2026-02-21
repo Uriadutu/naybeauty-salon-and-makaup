@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { db } from "../auth/Firebase";
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
-import { joinWithDan, truncateChars } from "../utils/helper";
 import { IoIosArrowRoundForward } from "react-icons/io";
 import { PiFlowerLotus } from "react-icons/pi";
 import HeaderDetail from "../components/HeaderDetail";
@@ -12,36 +11,41 @@ const DetailServices = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // 1️⃣ listen layanan
     const unsubLayanan = onSnapshot(
       query(collection(db, "layanan"), orderBy("createdAt", "asc")),
       (layananSnap) => {
         const layananMap = {};
+
         layananSnap.docs.forEach((doc) => {
           layananMap[doc.id] = {
             id: doc.id,
             nama: doc.data().nama,
-            deskripsi: "",
             menus: [],
+            hargaMulai: 0,
           };
         });
 
-        // 2️⃣ listen menu_layanan
         const unsubMenu = onSnapshot(
           query(collection(db, "menu_layanan"), orderBy("createdAt", "asc")),
           (menuSnap) => {
             menuSnap.docs.forEach((doc) => {
-              const menu = doc.data();
+              const menu = { id: doc.id, ...doc.data() };
+
               if (layananMap[menu.id_layanan]) {
-                layananMap[menu.id_layanan].menus.push(menu.nama_menu);
+                layananMap[menu.id_layanan].menus.push(menu);
               }
             });
 
-            // 3️⃣ gabungkan menu jadi deskripsi
-            const result = Object.values(layananMap).map((item) => ({
-              ...item,
-              deskripsi: joinWithDan(item.menus),
-            }));
+            const result = Object.values(layananMap).map((item) => {
+              const hargaList = item.menus.map((m) => m.harga_menu || 0);
+              const hargaMulai =
+                hargaList.length > 0 ? Math.min(...hargaList) : 0;
+
+              return {
+                ...item,
+                hargaMulai,
+              };
+            });
 
             setServices(result);
             setLoading(false);
@@ -60,7 +64,7 @@ const DetailServices = () => {
       <HeaderDetail />
       <section id="services">
         <div className="py-16 px-4 sm:px-8 bg-[#FFE8DA]">
-          <h1 className="judul">Detail Layanan</h1>
+          <h1 className="subjudul"></h1>
           <div>
             {/* GRID */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 justify-center mt-10">
@@ -76,29 +80,70 @@ const DetailServices = () => {
                 services.map((item) => (
                   <div
                     key={item.id}
-                    className="bg-white flex flex-col justify-between p-8 pb-1 border border-gray-300 hover:shadow-lg duration-500"
+                    className="group bg-white rounded-2xl p-6 border border-gray-100
+               shadow-sm hover:shadow-2xl
+               transition-all duration-500 flex flex-col justify-between"
                   >
-                    <div className="bg-[#FFE8DA] w-14 h-14 mb-6 flex justify-center items-center">
-                      <PiFlowerLotus size={28} color="#AD9052" />
-                    </div>
-                    <div>
-                      <h1 className="mb-3 font-cormorant font-semibold text-2xl">
-                        {item.nama}
-                      </h1>
-
-                      <p className="text-gray-700">
-                        {item.deskripsi.length > 0
-                          ? `Tersedia Menu ${truncateChars(item.deskripsi, 180)}`
-                          : "Belum Ada Menu"}
-                      </p>
-                    </div>
-
-                    <Link
-                      to={`/layanan/${item.id}`}
-                      className="underline w-full border-t py-3 border-t-gray-200 mt-10 flex items-end gap-1 text-[#AD9052]"
+                    {/* ICON */}
+                    <div
+                      className="w-14 h-14 rounded-xl bg-[#FFE8DA]
+                    flex items-center justify-center mb-5
+                    group-hover:scale-110 transition"
                     >
-                      Selengkapnya <IoIosArrowRoundForward />
-                    </Link>
+                      <PiFlowerLotus size={26} className="text-[#AD9052]" />
+                    </div>
+
+                    {/* CONTENT */}
+                    <div>
+                      <h2 className="text-2xl font-semibold mb-2 tracking-tight">
+                        {item.nama}
+                      </h2>
+
+                      {/* BADGE */}
+                      <span
+                        className="inline-block text-xs bg-[#AD9052]/10
+                       text-[#AD9052] px-3 py-1 rounded-full mb-3"
+                      >
+                        {item.menus.length} Menu Tersedia
+                      </span>
+
+                      {/* PREVIEW MENU */}
+                      <ul className="text-sm text-gray-600 space-y-1 mb-4">
+                        {item.menus.slice(0, 3).map((menu) => (
+                          <li key={menu.id}>• {menu.nama_menu}</li>
+                        ))}
+
+                        {item.menus.length > 3 && (
+                          <li className="text-[#AD9052] text-xs">
+                            + {item.menus.length - 3} menu lainnya
+                          </li>
+                        )}
+                      </ul>
+                    </div>
+
+                    {/* FOOTER */}
+                    <div className="mt-6 border-t pt-4 flex items-center justify-between">
+                      <div>
+                        {item.hargaMulai > 0 && (
+                          <p className="text-sm text-gray-500">Mulai dari</p>
+                        )}
+
+                        <p className="text-lg font-semibold text-[#AD9052]">
+                          {item.hargaMulai > 0
+                            ? `Rp${item.hargaMulai.toLocaleString("id-ID")}`
+                            : "-"}
+                        </p>
+                      </div>
+
+                      <Link
+                        to={`/layanan/${item.id}`}
+                        className="text-sm font-medium text-[#AD9052]
+                   flex items-center gap-1
+                   group-hover:gap-2 transition-all"
+                      >
+                        Detail <IoIosArrowRoundForward size={20} />
+                      </Link>
+                    </div>
                   </div>
                 ))
               )}
