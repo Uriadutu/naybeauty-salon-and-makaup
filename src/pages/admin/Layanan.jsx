@@ -69,6 +69,7 @@ const Layanan = () => {
     fetchLayanan();
   }, []);
 
+  // 🔍 FILTER SEARCH
   const filteredData = layananData.filter(
     (item) =>
       item.nama?.toLowerCase().includes(search.toLowerCase()) ||

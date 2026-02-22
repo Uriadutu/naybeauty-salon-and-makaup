@@ -41,7 +41,7 @@ const Home = () => {
             <p className="text-xl mb-8 max-w-2xl mx-auto">
               Nikmati pengalaman perawatan kecantikan premium dengan layanan
               personal dan berkualitas. Transformasi diri Anda dimulai di
-              NayBeauty
+              NayBeauty Salon and Makeup
             </p>
 
             <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
