@@ -267,12 +267,10 @@ const Paket = () => {
                               <div className="space-y-3 text-sm">
                                 <ul className="list-disc ml-6">
                                   {item.services?.map((srv, i) => {
-                                    // 🔥 ambil nama layanan
                                     const layanan = services.find(
                                       (l) => l.id === srv.id_layanan,
                                     );
 
-                                    // 🔥 ambil semua menu yang dipilih berdasarkan ID
                                     const selectedMenus = menuLayanan.filter(
                                       (menu) =>
                                         srv.selectedMenuItems?.includes(
@@ -291,9 +289,9 @@ const Paket = () => {
                                         {selectedMenus.length > 0 && (
                                           <ul className="list-disc ml-6 mt-1 text-gray-600">
                                             {selectedMenus.map((menu) => (
-                                              <div key={menu.id} className="grid w-[300px] grid-cols-2 gap-0 items-center">
+                                              <div key={menu.id} className="grid w-[300px] sm:w-[600px] grid-cols-2 gap-0 items-center">
 
-                                                <p className="m-0"> 
+                                                <p className="m-0 whitespace-nowrap"> 
 
                                                 {menu.nama_menu} 
                                                 </p>
@@ -340,7 +338,6 @@ const Paket = () => {
             <button
               onClick={() => {
                 handleFav(dropdown.id);
-
                 setDropdown({ open: false, x: 0, y: 0, id: null });
               }}
               className="w-full text-left px-3 text-amber-500 py-2 hover:bg-amber-100"

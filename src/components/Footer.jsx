@@ -1,15 +1,6 @@
-import { Instagram} from "lucide-react";
+import { Instagram } from "lucide-react";
 import { BsTiktok, BsWhatsapp } from "react-icons/bs";
 import { Link } from "react-router-dom";
-
-const quickLinks = [
-  { name: "Beranda", href: "#beranda" },
-  { name: "Tentang Kami", href: "#tentang" },
-  { name: "Layanan", href: "#layanan" },
-  { name: "Harga", href: "#harga" },
-  { name: "Galeri", href: "#galeri" },
-  { name: "Kontak", href: "#kontak" },
-];
 
 const services = [
   "Hair Styling",
@@ -21,6 +12,29 @@ const services = [
 ];
 
 const Footer = () => {
+  
+
+const handleScrollTo = (id) => {
+  const el = document.getElementById(id);
+  if (el) {
+    el.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }
+};
+
+
+const menus = [
+  ["Beranda", "home"],
+  ["Tentang Kami", "about"],
+  ["Layanan & Menu", "services"],
+  ["Paket", "menu-paket"],
+  ["Galeri", "galeri"],
+  ["Kontak", "contact"],
+];
+
+
   return (
     <footer className="bg-[#332407]  text-white">
       <div className="container mx-auto px-6 py-16">
@@ -70,13 +84,17 @@ const Footer = () => {
               Quick Links
             </h3>
             <ul className="space-y-3">
-              {quickLinks.map((link) => (
-                <li key={link.name}>
+              {menus.map(([label, id]) => (
+                <li key={id}>
                   <Link
-                    href={link.href}
-                    className="text-sm transition-colors"
+                    to="/"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleScrollTo(id);
+                    }}
+                    className="block font-medium text-white hover:text-[#FFA095] transition-colors"
                   >
-                    {link.name}
+                    {label}
                   </Link>
                 </li>
               ))}
@@ -85,13 +103,13 @@ const Footer = () => {
 
           {/* Services */}
           <div>
-            <h3 className="text-sm tracking-widest uppercase mb-6 font-chenla">Layanan</h3>
+            <h3 className="text-sm tracking-widest uppercase mb-6 font-chenla">
+              Layanan
+            </h3>
             <ul className="space-y-3">
               {services.map((service) => (
                 <li key={service}>
-                  <span className="text-sm">
-                    {service}
-                  </span>
+                  <span className="text-sm">{service}</span>
                 </li>
               ))}
             </ul>
@@ -99,12 +117,17 @@ const Footer = () => {
 
           {/* Contact */}
           <div>
-            <h3 className="text-sm tracking-widest uppercase mb-6 font-chenla">Kontak</h3>
+            <h3 className="text-sm tracking-widest uppercase mb-6 font-chenla">
+              Kontak
+            </h3>
             <ul className="space-y-3 text-sm">
-              <li>Jl. Purwodadi - Bagelen, Dusun II, Purwodadi, Kec. Purwodadi, Kabupaten Purworejo</li>
+              <li>
+                Jl. Purwodadi - Bagelen, Dusun II, Purwodadi, Kec. Purwodadi,
+                Kabupaten Purworejo
+              </li>
               <li>Jawa Tengah, 54173</li>
-              <li>081234567890</li>
-              <li>naycantik@gmail.com</li>
+              <li>+62 856-4057-7538</li>
+              <li>naybeautymakeup18@gmail.com</li>
             </ul>
           </div>
         </div>
@@ -119,16 +142,10 @@ const Footer = () => {
             </p>
 
             <div className="flex items-center gap-6">
-              <Link
-                to={"#"}
-                className="text-sm transition-colors"
-              >
+              <Link to={"#"} className="text-sm transition-colors">
                 Privacy Policy
               </Link>
-              <Link
-                to={"#"}
-                className="text-sm transition-colors"
-              >
+              <Link to={"#"} className="text-sm transition-colors">
                 Terms of Service
               </Link>
             </div>
@@ -137,7 +154,6 @@ const Footer = () => {
       </div>
     </footer>
   );
-}
-
+};
 
 export default Footer;

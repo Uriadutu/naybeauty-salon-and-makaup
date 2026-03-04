@@ -12,6 +12,7 @@ import DetailServices from './pages/DetailServices';
 import AturMenu from './pages/admin/AturMenu';
 import AturGaleri from './pages/admin/AturGaleri';
 import Galeri from './pages/admin/Galeri';
+import Reservasi from './pages/Reservasi';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
             <Route path="/semua-layanan" element={<DetailServices />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/reservasi" element={<Reservasi />} />
             {/* admin */}
             <Route path="/login/ney" element={<Login />} />
             {/* protected */}

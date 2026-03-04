@@ -80,9 +80,15 @@ const Header = () => {
         </nav>
 
         {/* Desktop Button */}
-        <button className="hidden md:block bg-[#332407] py-1 px-6 text-white rounded-sm hover:opacity-90 transition">
+        <Link
+          to="/"
+          onClick={() => {
+            handleScrollTo("contact");
+          }}
+          className="hidden md:block bg-[#332407] py-1 px-6 text-white rounded-sm hover:opacity-90 transition"
+        >
           Reservasi
-        </button>
+        </Link>
 
         {/* Mobile Toggle */}
         <button
@@ -120,9 +126,15 @@ const Header = () => {
             </li>
           ))}
 
-          <button className="py-2 rounded-sm bg-[#332407] text-white hover:opacity-90 transition">
+          <Link
+            to="/"
+            onClick={() => {
+              handleScrollTo("contact");
+            }}
+            className="py-2 rounded-sm text-center bg-[#332407] text-white hover:opacity-90 transition"
+          >
             Reservasi
-          </button>
+          </Link>
         </ul>
       </div>
     </header>

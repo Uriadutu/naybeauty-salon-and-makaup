@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 
 const DetailLayananModal = ({ isOpen, onClose, dataDetail }) => {
-  //   if (!isOpen) return null;
+    if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center px-4">

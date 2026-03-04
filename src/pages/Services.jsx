@@ -5,10 +5,14 @@ import { db } from "../auth/Firebase";
 import { PiFlowerLotus } from "react-icons/pi";
 import { IoIosArrowRoundForward } from "react-icons/io";
 import { Link } from "react-router-dom";
+import DetailLayananModal from "../modal/user/DetailLayananModal";
+import { AnimatePresence } from "framer-motion";
 
 const Services = () => {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [openModalDetail, setOpenModalDetail] = useState(false);
+  const [selectedLayanan, setSelectedLayanan] = useState(null);
 
   useEffect(() => {
     const unsubLayanan = onSnapshot(
@@ -59,8 +63,22 @@ const Services = () => {
     return () => unsubLayanan();
   }, []);
 
+  const handelOpenModalDetail = (layanan) => {
+    setSelectedLayanan(layanan);
+    setOpenModalDetail(true);
+  };
+
   return (
     <section id="services">
+      <AnimatePresence>
+        {openModalDetail && (
+          <DetailLayananModal
+            isOpen={openModalDetail}
+            onClose={() => setOpenModalDetail(false)}
+            dataDetail={selectedLayanan}
+          />
+        )}
+      </AnimatePresence>
       <div className="py-16 px-4 sm:px-8 bg-[#FFE8DA]">
         <div>
           <h1 className="judul">Layanan dan Menu</h1>
@@ -139,14 +157,14 @@ const Services = () => {
                       </p>
                     </div>
 
-                    <Link
-                      to={`/layanan/${item.id}`}
+                    <button
+                      onClick={()=> handelOpenModalDetail(item)}
                       className="text-sm font-medium text-[#AD9052] 
                    flex items-center gap-1 
                    group-hover:gap-2 transition-all"
                     >
                       Detail <IoIosArrowRoundForward size={20} />
-                    </Link>
+                    </button>
                   </div>
                 </div>
               ))

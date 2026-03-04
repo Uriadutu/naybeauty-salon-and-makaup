@@ -40,9 +40,9 @@ const HeaderDetail = () => {
           <span className="text-[black] flex items-center gap-1"> <MdArrowBack /><p className="text-[black] hidden sm:block">Kembali</p> </span>
         </Link>
         {/* Logo */}
-        <Link to="/" className="text-2xl font-crimson text-center">
+        <p className="text-2xl font-crimson text-center">
           <span className="text-[black]">Semua {getTitle()} </span>
-        </Link>
+        </p>
         <div className="p-1 text-right"></div>
       </div>
     </header>

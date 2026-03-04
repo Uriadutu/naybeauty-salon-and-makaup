@@ -5,10 +5,15 @@ import { IoIosArrowRoundForward } from "react-icons/io";
 import { PiFlowerLotus } from "react-icons/pi";
 import HeaderDetail from "../components/HeaderDetail";
 import { Link } from "react-router-dom";
+import { AnimatePresence } from "framer-motion";
+import DetailLayananModal from "../modal/user/DetailLayananModal";
 
 const DetailServices = () => {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const [openModalDetail, setOpenModalDetail] = useState(false);
+  const [selectedLayanan, setSelectedLayanan] = useState(null);
 
   useEffect(() => {
     const unsubLayanan = onSnapshot(
@@ -59,8 +64,22 @@ const DetailServices = () => {
     return () => unsubLayanan();
   }, []);
 
+  const handelOpenModalDetail = (layanan) => {
+    setSelectedLayanan(layanan);
+    setOpenModalDetail(true);
+  };
+
   return (
     <div>
+      <AnimatePresence>
+        {openModalDetail && (
+          <DetailLayananModal
+            isOpen={openModalDetail}
+            onClose={() => setOpenModalDetail(false)}
+            dataDetail={selectedLayanan}
+          />
+        )}
+      </AnimatePresence>
       <HeaderDetail />
       <section id="services">
         <div className="py-16 px-4 sm:px-8 bg-[#FFE8DA]">
@@ -135,7 +154,7 @@ const DetailServices = () => {
                       </div>
 
                       <Link
-                        to={`/layanan/${item.id}`}
+                        onClick={() => handelOpenModalDetail(item)}
                         className="text-sm font-medium text-[#AD9052]
                    flex items-center gap-1
                    group-hover:gap-2 transition-all"
