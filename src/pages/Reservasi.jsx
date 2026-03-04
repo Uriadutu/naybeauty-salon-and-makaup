@@ -6,7 +6,6 @@ import { db } from "../auth/Firebase";
 
 const Reservasi = () => {
   const [services, setServices] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [paketList, setPaketList] = useState([]);
   const [menuLayanan, setMenuLayanan] = useState([]);
 
@@ -44,7 +43,6 @@ const Reservasi = () => {
             });
 
             setServices(Object.values(layananMap));
-            setLoading(false);
           },
         );
 
