@@ -116,7 +116,6 @@ const Galeri = () => {
                   <th className="py-3 text-center text-sm">#</th>
                 </tr>
               </thead>
-
               <tbody>
                 {loading ? (
                   <tr>

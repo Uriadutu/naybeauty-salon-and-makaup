@@ -1,0 +1,15 @@
+{
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "naybeauty-salon-and-makaup.vercel.app"
+        }
+      ],
+      "destination": "https://naybeautysalon.online/$1",
+      "permanent": true
+    }
+  ]
+}

@@ -8,7 +8,8 @@ import {
 } from "firebase/firestore";
 import { useNavigate, useParams } from "react-router-dom";
 
-const EditGaleri = (id) => {
+const EditGaleri = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
 
   const [judul, setJudul] = useState("");

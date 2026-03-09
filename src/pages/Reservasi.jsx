@@ -8,15 +8,11 @@ const Reservasi = () => {
   const [services, setServices] = useState([]);
   const [paketList, setPaketList] = useState([]);
   const [menuLayanan, setMenuLayanan] = useState([]);
-
   const [showList, setShowList] = useState(false);
-
-  // 🔥 MULTI FORM LAYANAN
   const [serviceForms, setServiceForms] = useState([
     { layananId: "", menus: [] },
   ]);
 
-  /* ================= FETCH FIREBASE ================= */
   useEffect(() => {
     const unsubLayanan = onSnapshot(
       query(collection(db, "layanan"), orderBy("createdAt", "asc")),
