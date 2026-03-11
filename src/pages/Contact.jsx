@@ -62,7 +62,17 @@ const Contact = () => {
                     <p className="font-semibold text-lg text-[#3B2F2F]">
                       Jam Operasional
                     </p>
-                    <p>Senin - Minggu: 09.00 - 20.00</p>
+                    <div className="space-y-1 text-sm">
+                      <p className="font-medium">Senin - Minggu</p>
+                      <p>
+                        10.00 – 18.00{" "}
+                        <span className="text-gray-500">(Khusus Wanita)</span>
+                      </p>
+                      <p>
+                        18.00 – 20.00{" "}
+                        <span className="text-gray-500">(Wanita & Pria)</span>
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -70,13 +80,18 @@ const Contact = () => {
 
             <div>
               <div className=" bg-[#FFE8DA] h-full w-full flex flex-col items-center justify-center shadow-md p-8">
-                <h2 className="text- font-semibold text-2xl text-center">Reservasi Online</h2>
+                <h2 className="text- font-semibold text-2xl text-center">
+                  Reservasi Online
+                </h2>
                 <h1 className="text-center mt-4 mb-8">
                   {" "}
                   Pilih layanan yang Anda inginkan, lalu diarahkan langsung ke
                   WhatsApp.
                 </h1>
-                <Link to={"/reservasi"} className="text-center bg-[#332407] w-full p-3 text-white mt-3">
+                <Link
+                  to={"/reservasi"}
+                  className="text-center bg-[#332407] w-full p-3 text-white mt-3"
+                >
                   Pilih Menu
                 </Link>
               </div>

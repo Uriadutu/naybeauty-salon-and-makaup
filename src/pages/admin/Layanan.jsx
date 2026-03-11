@@ -118,12 +118,8 @@ const Layanan = () => {
         {/* HEADER */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <div className="">
-            <h1 className="judul-admin">
-              Manajemen Layanan
-            </h1>
-            <h1 className="subjudul-admin">
-              Kelola layanan salon Anda
-            </h1>
+            <h1 className="judul-admin">Manajemen Layanan</h1>
+            <h1 className="subjudul-admin">Kelola layanan salon Anda</h1>
           </div>
 
           <button
