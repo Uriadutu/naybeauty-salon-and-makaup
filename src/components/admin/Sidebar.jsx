@@ -8,6 +8,8 @@ import {
 } from "react-icons/fi";
 import { PiFlowerLotus } from "react-icons/pi";
 import { useNavigate } from "react-router-dom";
+import { signOut } from "firebase/auth";
+import { auth } from "../../auth/Firebase";
 
 const Sidebar = ({ isOpen, setIsOpen }) => {
   return (
@@ -63,9 +65,22 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
 const MenuItem = ({ icon, label, danger, to }) => {
   const navigate = useNavigate();
 
+  const handleClick = async () => {
+    if (label === "Logout") {
+      try {
+        await signOut(auth);
+        navigate("/login");
+      } catch (error) {
+        console.error("Logout gagal:", error);
+      }
+    } else if (to) {
+      navigate(to);
+    }
+  };
+
   return (
     <button
-      onClick={() => navigate(to)}
+      onClick={handleClick}
       className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition font-cormorant
       ${
         danger
@@ -78,5 +93,4 @@ const MenuItem = ({ icon, label, danger, to }) => {
     </button>
   );
 };
-
 export default Sidebar;

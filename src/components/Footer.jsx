@@ -1,39 +1,51 @@
 import { Instagram } from "lucide-react";
 import { BsTiktok, BsWhatsapp } from "react-icons/bs";
 import { Link } from "react-router-dom";
-
-const services = [
-  "Hair Styling",
-  "Facial Treatment",
-  "Makeup Artist",
-  "Nail Art",
-  "Spa & Massage",
-  "Lash & Brow",
-];
+import { useEffect, useState } from "react";
+import { collection, getDocs, orderBy, query } from "firebase/firestore";
+import { db } from "../auth/Firebase"; // sesuaikan path firebase kamu
 
 const Footer = () => {
-  
+  const [layananData, setLayananData] = useState([]);
 
-const handleScrollTo = (id) => {
-  const el = document.getElementById(id);
-  if (el) {
-    el.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
-  }
-};
+  const fetchLayanan = async () => {
+    try {
+      const q = query(collection(db, "layanan"), orderBy("createdAt", "desc"));
+      const snapshot = await getDocs(q);
 
+      const data = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
 
-const menus = [
-  ["Beranda", "home"],
-  ["Tentang Kami", "about"],
-  ["Layanan & Menu", "services"],
-  ["Paket", "menu-paket"],
-  ["Galeri", "galeri"],
-  ["Kontak", "contact"],
-];
+      setLayananData(data);
+    } catch (error) {
+      console.error("Gagal fetch layanan:", error);
+    }
+  };
 
+  useEffect(() => {
+    fetchLayanan();
+  }, []);
+
+  const handleScrollTo = (id) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  };
+
+  const menus = [
+    ["Beranda", "home"],
+    ["Tentang Kami", "about"],
+    ["Layanan & Menu", "services"],
+    ["Paket", "menu-paket"],
+    ["Galeri", "galeri"],
+    ["Kontak", "contact"],
+  ];
 
   return (
     <footer className="bg-[#332407]  text-white">
@@ -53,23 +65,26 @@ const menus = [
 
             <div className="flex items-center gap-3">
               <Link
+                target="_blank"
                 to={"https://www.instagram.com/naybeautymakeup_/"}
                 aria-label="Instagram"
                 className="w-10 h-10 flex items-center justify-center border transition-colors"
-              >
+                >
                 <Instagram size={18} />
               </Link>
 
               <Link
-                to={"#"}
+                to={"https://www.tiktok.com/@naybeautysalon_purworejo"}
+                target="_blank"
                 aria-label="Tiktok"
                 className="w-10 h-10 flex items-center justify-center border transition-colors"
-              >
+                >
                 <BsTiktok size={18} />
               </Link>
 
               <Link
-                to={"#"}
+                to={"https://wa.me/6285640577538"}
+                target="_blank"
                 aria-label="WhatsApp"
                 className="w-10 h-10 flex items-center justify-center border transition-colors"
               >
@@ -107,11 +122,12 @@ const menus = [
               Layanan
             </h3>
             <ul className="space-y-3">
-              {services.map((service) => (
-                <li key={service}>
-                  <span className="text-sm">{service}</span>
+              {layananData.slice(0, 5).map((service) => (
+                <li key={service.id}>
+                  <span className="text-sm">{service.nama}</span>
                 </li>
               ))}
+              <li>......</li>
             </ul>
           </div>
 
@@ -137,18 +153,16 @@ const menus = [
       <div className="border-t border-gray-500">
         <div className="container mx-auto px-6 py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-sm">
-              © 2024 Nay Beauty Salon. All rights reserved.
-            </p>
+            <p className="text-sm">© 2024 Nay Beauty Salon & Makaup.</p>
 
-            <div className="flex items-center gap-6">
+            {/* <div className="flex items-center gap-6">
               <Link to={"#"} className="text-sm transition-colors">
                 Privacy Policy
               </Link>
               <Link to={"#"} className="text-sm transition-colors">
                 Terms of Service
               </Link>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

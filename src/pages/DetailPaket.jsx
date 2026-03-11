@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { collection, onSnapshot } from "firebase/firestore";
 import { db } from "../auth/Firebase";
 import { IoMdCheckmark } from "react-icons/io";
-import { Link } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import DetailPaketModal from "../modal/user/DetailPaketModal";
+import HeaderDetail from "../components/HeaderDetail";
 
-const MenuPaket = () => {
+const DetailPaket = () => {
   const [paketList, setPaketList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [menuLayanan, setMenuLayanan] = useState([]);
@@ -72,7 +72,8 @@ const MenuPaket = () => {
     return () => unsubPaket();
   }, []);
   return (
-    <section id="menu-paket">
+    <section className="min-h-[100vh] bg-[#FFF9EB] " id="menu-paket">
+      <HeaderDetail />
       <AnimatePresence>
         <DetailPaketModal
           isOpen={openModal}
@@ -81,17 +82,9 @@ const MenuPaket = () => {
           menuLayanan={menuLayanan}
         />
       </AnimatePresence>
-      <div className="py-16 px-4 sm:px-8 bg-[#FFF9EB] ">
+      <div className="py-16 px-4 sm:px-8">
         <div>
-          <h1 className="judul">Paket</h1>
-          <h1 className="subjudul">Pilih Paket</h1>
-          <h1 className="subjudul2">Sesuai Kebutuhan</h1>
-          <h1 className="sub-deskripsi">
-            Nikmati berbagai paket perawatan eksklusif dengan kombinasi layanan
-            terbaik untuk hasil maksimal.
-          </h1>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 justify-center mt-14  border-b pb-10 border-[#baa67a]">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 justify-center mt-14">
             {loading ? (
               <p className="col-span-full text-center">Memuat paket...</p>
             ) : paketList.length === 0 ? (
@@ -212,13 +205,9 @@ const MenuPaket = () => {
             )}
           </div>
         </div>
-
-        <div className="flex items-center justify-center p-3 font-dmsans text-[#AD9052] tracking-[3px] uppercase">
-          <Link to="/semua-paket">Lihat Semua Paket</Link>
-        </div>
       </div>
     </section>
   );
 };
 
-export default MenuPaket;
+export default DetailPaket;

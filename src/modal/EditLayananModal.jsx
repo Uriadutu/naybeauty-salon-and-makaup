@@ -5,13 +5,11 @@ import { motion } from "framer-motion";
 
 const EditLayananModal = ({ isOpen, onClose, data, onSuccess }) => {
   const [nama, setNama] = useState("");
-  const [deskripsi, setDeskripsi] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (data) {
       setNama(data.nama || "");
-      setDeskripsi(data.deskripsi || "");
     }
   }, [data]);
 
@@ -26,7 +24,6 @@ const EditLayananModal = ({ isOpen, onClose, data, onSuccess }) => {
 
       await updateDoc(layananRef, {
         nama,
-        deskripsi,
         updatedAt: serverTimestamp(),
       });
 
@@ -68,21 +65,6 @@ const EditLayananModal = ({ isOpen, onClose, data, onSuccess }) => {
               focus:outline-none focus:ring-2 focus:ring-[#FFE8DA]"
             />
           </div>
-
-          <div>
-            <label className="text-sm font-medium text-gray-700">
-              Deskripsi
-            </label>
-            <textarea
-              value={deskripsi}
-              onChange={(e) => setDeskripsi(e.target.value)}
-              required
-              rows="3"
-              className="w-full mt-1 px-4 py-2.5 rounded-lg border border-gray-200
-              focus:outline-none focus:ring-2 focus:ring-[#FFE8DA]"
-            />
-          </div>
-
           <div className="flex justify-end gap-3 pt-4">
             <button
               type="button"

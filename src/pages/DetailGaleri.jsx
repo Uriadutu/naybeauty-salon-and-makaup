@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 import { db } from "../auth/Firebase";
 import { collection, getDocs, orderBy, query } from "firebase/firestore";
-import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
-const Galeri = () => {
+import HeaderDetail from "../components/HeaderDetail";
+
+const DetailGaleri = () => {
   const [galeriData, setGaleriData] = useState([]);
   const [layananMap, setLayananMap] = useState({});
-  const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const fetchData = async () => {
     setLoading(true);
@@ -46,10 +47,10 @@ const Galeri = () => {
   useEffect(() => {
     fetchData();
   }, []);
-
   return (
-    <section id="galeri" className="bg-[#FFE8DA]">
-      <AnimatePresence>
+    <div>
+      <HeaderDetail />
+       <AnimatePresence>
         {selectedImage && (
           <motion.div
             className="fixed inset-0 z-[80] bg-black/80 flex items-center justify-center p-4"
@@ -91,55 +92,41 @@ const Galeri = () => {
           </motion.div>
         )}
       </AnimatePresence>
-      <div className="py-16 px-4 sm:px-8 mx-auto">
-        {/* Heading */}
-        <div className="text-center mb-12">
-          <h1 className="judul">Galeri</h1>
-          <h1 className="subjudul">Hasil Karya</h1>
-          <h1 className="subjudul2">Salon Kami</h1>
-          <p className="sub-deskripsi">
-            Lihatlah transformasi menakjubkan yang telah diciptakan untuk
-            klien-klien kami.
-          </p>
-        </div>
-
-        {/* Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-10 border-b border-[#AD9052]">
-          {loading ? (
-            <p className="col-span-3 text-center">Memuat galeri...</p>
-          ) : galeriData.length === 0 ? (
-            <p className="col-span-3 text-center">Belum ada galeri</p>
-          ) : (
-            galeriData.slice(0, 9).map((item) => (
-              <div
+      <section id="services">
+        <div className="py-16 px-4 sm:px-8 bg-[#FFE8DA]">
+          <div className="grid mt-10 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {loading ? (
+              <p className="col-span-3 text-center">Memuat galeri...</p>
+            ) : galeriData.length === 0 ? (
+              <p className="col-span-3 text-center">Belum ada galeri</p>
+            ) : (
+              galeriData.map((item) => (
+               <div
                 key={item.id}
                 onClick={() => setSelectedImage(item)}
                 className="group relative overflow-hidden rounded-xl bg-white shadow-sm hover:shadow-xl transition duration-500 cursor-pointer"
               >
-                {/* Image */}
-                <img
-                  src={item.gambar}
-                  alt={item.judul}
-                  className="w-full h-[300px] object-cover transform group-hover:scale-110 transition duration-700"
-                />
+                  {/* Image */}
+                  <img
+                    src={item.gambar}
+                    alt={item.judul}
+                    className="w-full h-[300px] object-cover transform group-hover:scale-110 transition duration-700"
+                  />
 
-                {/* Overlay */}
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition duration-500 flex items-center justify-center">
-                  <h3 className="text-white text-xl font-semibold tracking-wide">
-                    {layananMap[item.id_layanan] || "Layanan"}
-                  </h3>
+                  {/* Overlay */}
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition duration-500 flex items-center justify-center">
+                    <h3 className="text-white text-xl font-semibold tracking-wide">
+                      {layananMap[item.id_layanan] || "Layanan"}
+                    </h3>
+                  </div>
                 </div>
-              </div>
-            ))
-          )}
+              ))
+            )}
+          </div>
         </div>
-
-        <div className="flex items-center justify-center p-3 font-dmsans text-[#AD9052] tracking-[3px] uppercase">
-          <Link to="/semua-galeri">Lihat Semua Galeri</Link>
-        </div>
-      </div>
-    </section>
+      </section>
+    </div>
   );
 };
 
-export default Galeri;
+export default DetailGaleri;

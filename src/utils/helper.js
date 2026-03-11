@@ -46,3 +46,13 @@ export const formatTanggal = (date) => {
     year: "numeric",
   });
 };
+
+export const formatTanggalPanjang = (date) => {
+  if (!date) return "-";
+  const d = date.toDate();
+  return d.toLocaleDateString("id-ID", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
+};

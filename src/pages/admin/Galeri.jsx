@@ -2,11 +2,19 @@ import { useEffect, useState } from "react";
 import Layout from "../../components/admin/Layout";
 import { RiMoreLine } from "react-icons/ri";
 import { FiEye } from "react-icons/fi";
-import { collection, getDocs, orderBy, query } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  orderBy,
+  query,
+  deleteDoc,
+  doc,
+} from "firebase/firestore";
 import { db } from "../../auth/Firebase";
 import { useNavigate } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import ModalAddGaleri from "../../modal/AddGaleriModal";
+
 import { formatTanggal } from "../../utils/helper";
 
 const Galeri = () => {
@@ -59,6 +67,25 @@ const Galeri = () => {
     fetchData();
   }, []);
 
+  const handleDelete = async (id) => {
+    const confirmDelete = window.confirm(
+      "Apakah yakin ingin menghapus galeri ini?",
+    );
+    if (!confirmDelete) return;
+
+    try {
+      await deleteDoc(doc(db, "galeri", id));
+
+      // refresh data
+      fetchData();
+
+      // tutup dropdown
+      setDropdown({ open: false, x: 0, y: 0, id: null });
+    } catch (error) {
+      console.error("Gagal menghapus data:", error);
+    }
+  };
+
   const filteredData = galeriData.filter(
     (item) =>
       item.judul?.toLowerCase().includes(search.toLowerCase()) ||
@@ -72,7 +99,7 @@ const Galeri = () => {
           <ModalAddGaleri
             isOpen={openModal}
             onClose={() => setOpenModal(false)}
-            onSuccess={fetchData()}
+            onSuccess={fetchData}
           />
         )}
       </AnimatePresence>
@@ -239,7 +266,10 @@ const Galeri = () => {
               >
                 Edit
               </button>
-              <button className="w-full text-left px-3 py-2 hover:bg-gray-100">
+              <button
+                onClick={() => handleDelete(dropdown.id)}
+                className="w-full text-left px-3 py-2 hover:bg-gray-100 text-red-500"
+              >
                 Hapus
               </button>
             </div>

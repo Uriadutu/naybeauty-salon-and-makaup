@@ -10,9 +10,8 @@ import {
 
 const ModalAddGaleri = ({ isOpen, onClose, onSuccess }) => {
   const [judul, setJudul] = useState("");
-  const [deskripsi, setDeskripsi] = useState("");
+  const [tanggal, setTanggal] = useState("");
   const [idLayanan, setIdLayanan] = useState("");
-  const [kategoriBaru, setKategoriBaru] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [layananList, setLayananList] = useState([]);
@@ -22,7 +21,7 @@ const ModalAddGaleri = ({ isOpen, onClose, onSuccess }) => {
   useEffect(() => {
     const fetchLayanan = async () => {
       const snapshot = await getDocs(
-        query(collection(db, "layanan"), orderBy("createdAt", "asc")),
+        query(collection(db, "layanan"), orderBy("createdAt", "asc"))
       );
 
       const data = snapshot.docs.map((doc) => ({
@@ -60,7 +59,7 @@ const ModalAddGaleri = ({ isOpen, onClose, onSuccess }) => {
       {
         method: "POST",
         body: data,
-      },
+      }
     );
 
     const result = await res.json();
@@ -68,13 +67,13 @@ const ModalAddGaleri = ({ isOpen, onClose, onSuccess }) => {
   };
 
   const handleSubmit = async () => {
-    if (!judul || !deskripsi || !selectedFile) {
+    if (!judul || !tanggal || !selectedFile) {
       alert("Semua field wajib diisi.");
       return;
     }
 
-    if (!idLayanan && !kategoriBaru) {
-      alert("Pilih atau isi kategori.");
+    if (!idLayanan) {
+      alert("Pilih kategori layanan.");
       return;
     }
 
@@ -85,21 +84,21 @@ const ModalAddGaleri = ({ isOpen, onClose, onSuccess }) => {
 
       await addDoc(collection(db, "galeri"), {
         judul,
-        deskripsi,
-        id_layanan: idLayanan || null,
-        kategori_custom: kategoriBaru || null,
+        tanggal: new Date(tanggal),
+        id_layanan: idLayanan,
         gambar: imageURL,
         createdAt: new Date(),
       });
 
       onSuccess && onSuccess();
+
       // reset
       setJudul("");
-      setDeskripsi("");
+      setTanggal("");
       setIdLayanan("");
-      setKategoriBaru("");
       setSelectedFile(null);
       setPreview(null);
+
       onClose();
     } catch (error) {
       console.error(error);
@@ -142,20 +141,18 @@ const ModalAddGaleri = ({ isOpen, onClose, onSuccess }) => {
           className="w-full border rounded-lg px-3 py-2 mb-3"
         />
 
-        {/* Deskripsi */}
-        <textarea
-          placeholder="Deskripsi"
-          value={deskripsi}
-          onChange={(e) => setDeskripsi(e.target.value)}
+        {/* Tanggal */}
+        <input
+          type="date"
+          value={tanggal}
+          onChange={(e) => setTanggal(e.target.value)}
           className="w-full border rounded-lg px-3 py-2 mb-3"
         />
 
         {/* Dropdown Kategori */}
         <select
           value={idLayanan}
-          onChange={(e) => {
-            setIdLayanan(e.target.value);
-          }}
+          onChange={(e) => setIdLayanan(e.target.value)}
           className="w-full border rounded-lg px-3 py-2 mb-3"
         >
           <option value="">Pilih Kategori Layanan</option>

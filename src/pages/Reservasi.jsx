@@ -3,12 +3,16 @@ import { MdArrowBack, MdKeyboardArrowUp } from "react-icons/md";
 import { Link } from "react-router-dom";
 import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
 import { db } from "../auth/Firebase";
+import { parseAndFormatDateString } from "../utils/helper";
 
 const Reservasi = () => {
   const [services, setServices] = useState([]);
   const [paketList, setPaketList] = useState([]);
-  const [menuLayanan, setMenuLayanan] = useState([]);
   const [showList, setShowList] = useState(false);
+  const [nama, setNama] = useState("");
+  const [tanggal, setTanggal] = useState("");
+  const [jam, setJam] = useState("");
+  const [paketCart, setPaketCart] = useState([]);
   const [serviceForms, setServiceForms] = useState([
     { layananId: "", menus: [] },
   ]);
@@ -50,13 +54,6 @@ const Reservasi = () => {
   }, []);
 
   useEffect(() => {
-    const unsubMenu = onSnapshot(collection(db, "menu_layanan"), (snap) => {
-      const data = snap.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setMenuLayanan(data);
-    });
 
     const unsubPaket = onSnapshot(collection(db, "paket"), (snap) => {
       const data = snap.docs.map((doc) => ({
@@ -67,33 +64,50 @@ const Reservasi = () => {
     });
 
     return () => {
-      unsubMenu();
       unsubPaket();
     };
   }, []);
 
-  const handleAddPaket = (paket) => {
-    let updatedForms = [];
+  const handleCheckPaket = (paket, checked) => {
+    if (checked) {
+      setPaketCart((prev) => [...prev, paket]);
+    } else {
+      setPaketCart((prev) => prev.filter((p) => p.id !== paket.id));
+    }
+  };
 
-    paket.services?.forEach((srv) => {
-      const layananId = srv.layananId;
+  const handleReservasi = () => {
+    if (!nama || !tanggal || !jam) {
+      alert("Mohon isi nama, tanggal dan jam.");
+      return;
+    }
 
-      const selectedMenus = menuLayanan.filter((menu) =>
-        srv.selectedMenuItems?.includes(menu.id),
-      );
+    if (cart.length === 0) {
+      alert("Silakan pilih layanan terlebih dahulu.");
+      return;
+    }
 
-      if (selectedMenus.length > 0) {
-        updatedForms.push({
-          layananId,
-          menus: selectedMenus,
-        });
+    const nomorWA = "6285640577538"; // ganti dengan nomor tujuan
+
+    let message = `Halo Nay Beauty, saya ingin melakukan reservasi.\n\n`;
+
+    message += `Nama: ${nama}\n`;
+    message += `Tanggal: ${parseAndFormatDateString(tanggal)}\n`;
+    message += `Jam: ${jam}\n\n`;
+
+    message += `Layanan yang dipilih:\n`;
+
+    cart.forEach((item, i) => {
+      if (item.type === "paket") {
+        message += `${i + 1}. Paket - ${item.name}\n`;
+      } else {
+        message += `${i + 1}. ${item.nama_layanan} - ${item.nama_menu}\n`;
       }
     });
 
-    // Tambahkan 1 form kosong di akhir
-    updatedForms.push({ layananId: "", menus: [] });
+    const url = `https://wa.me/${nomorWA}?text=${encodeURIComponent(message)}`;
 
-    setServiceForms(updatedForms);
+    window.open(url, "_blank");
   };
 
   /* ================= HANDLE PILIH LAYANAN ================= */
@@ -133,13 +147,24 @@ const Reservasi = () => {
   };
 
   /* ================= CART GABUNG SEMUA ================= */
-  const cart = serviceForms.flatMap((form) =>
+  const layananCart = serviceForms.flatMap((form) =>
     form.menus.map((menu) => ({
       ...menu,
       nama_layanan: services.find((s) => s.id === form.layananId)?.nama || "",
     })),
   );
 
+  const cart = [
+    ...paketCart.map((p) => ({
+      type: "paket",
+      name: p.name,
+    })),
+    ...layananCart.map((m) => ({
+      type: "menu",
+      nama_layanan: m.nama_layanan,
+      nama_menu: m.nama_menu,
+    })),
+  ];
   return (
     <div className="bg-[#FFF9EB] min-h-[100vh]">
       {/* HEADER */}
@@ -148,7 +173,7 @@ const Reservasi = () => {
           <Link to={-1} className="text-2xl">
             <span className="flex items-center gap-1">
               <MdArrowBack />
-              <p className="hidden sm:block">Kembali</p>
+              <p className="hidden text-2xl font-crimson sm:block">Kembali</p>
             </span>
           </Link>
           <p className="text-2xl text-center">Reservasi</p>
@@ -174,18 +199,36 @@ const Reservasi = () => {
                 <p className="text-sm text-gray-400">Belum ada paket</p>
               ) : (
                 <div className="space-y-2 max-h-60 overflow-y-auto">
-                  {paketList.map((paket) => (
-                    <div
-                      key={paket.id}
-                      onClick={() => handleAddPaket(paket)}
-                      className="border p-3 rounded-lg cursor-pointer hover:bg-[#FFF4E8] transition"
-                    >
-                      <p className="font-medium">{paket.name}</p>
-                      <p className="text-sm text-[#AD9052]">
-                        Rp {paket.finalPrice?.toLocaleString("id-ID")}
-                      </p>
-                    </div>
-                  ))}
+                  {paketList.map((paket) => {
+                    const isChecked = paketCart.some((p) => p.id === paket.id);
+
+                    return (
+                      <div
+                        key={paket.id}
+                        onClick={() => handleCheckPaket(paket, !isChecked)}
+                        className={`border p-3 rounded-lg cursor-pointer transition flex justify-between items-center
+      ${isChecked ? "bg-[#FFF4E8]" : "hover:bg-gray-50"}`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="checkbox"
+                            checked={isChecked}
+                            onChange={(e) =>
+                              handleCheckPaket(paket, e.target.checked)
+                            }
+                            onClick={(e) => e.stopPropagation()}
+                          />
+
+                          <div>
+                            <p className="font-medium">{paket.name}</p>
+                            <p className="text-sm text-[#AD9052]">
+                              Rp {paket.finalPrice?.toLocaleString("id-ID")}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -261,11 +304,26 @@ const Reservasi = () => {
             <div className="bg-white fixed inline sm:relative bottom-0 left-0 rounded-lg border w-full sm:h-auto p-8">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <h1>Nama Lengkap</h1>
-                <input type="text" className="border p-2 rounded" />
+                <input
+                  type="text"
+                  value={nama}
+                  onChange={(e) => setNama(e.target.value)}
+                  className="border p-2 rounded"
+                />
                 <h1>Tanggal</h1>
-                <input type="date" className="border p-2 rounded" />
+                <input
+                  type="date"
+                  value={tanggal}
+                  onChange={(e) => setTanggal(e.target.value)}
+                  className="border p-2 rounded"
+                />
                 <h1>Jam</h1>
-                <input type="time" className="border p-2 rounded" />
+                <input
+                  type="time"
+                  value={jam}
+                  onChange={(e) => setJam(e.target.value)}
+                  className="border p-2 rounded"
+                />
               </div>
 
               <div className="flex justify-between items-center mt-4 sm:hidden">
@@ -293,7 +351,9 @@ const Reservasi = () => {
                             className="flex justify-between text-sm border-b pb-1"
                           >
                             <span>
-                              {item.nama_layanan} - {item.nama_menu}
+                              {item.type === "paket"
+                                ? `Paket - ${item.name}`
+                                : `${item.nama_layanan} - ${item.nama_menu}`}
                             </span>
                           </li>
                         ))}
@@ -303,7 +363,10 @@ const Reservasi = () => {
                 )}
               </div>
 
-              <button className="text-center bg-[#e8ba58] w-full border p-2 mt-4 hover:bg-[#daac49] duration-300">
+              <button
+                onClick={handleReservasi}
+                className="text-center bg-[#e8ba58] w-full border p-2 mt-4 hover:bg-[#daac49] duration-300"
+              >
                 Reservasi Sekarang
               </button>
             </div>
