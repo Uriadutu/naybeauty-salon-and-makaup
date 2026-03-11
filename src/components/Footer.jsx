@@ -153,7 +153,7 @@ const Footer = () => {
       <div className="border-t border-gray-500">
         <div className="container mx-auto px-6 py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-sm">© 2024 Nay Beauty Salon & Makaup.</p>
+            <p className="text-sm">© 2026 Nay Beauty Salon & Makaup.</p>
 
             {/* <div className="flex items-center gap-6">
               <Link to={"#"} className="text-sm transition-colors">
